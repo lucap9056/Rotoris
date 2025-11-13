@@ -1,0 +1,19 @@
+--- @class Rotoris.LuaCanvas.CanvasPath
+--- @field reset fun(self: Rotoris.LuaCanvas.CanvasPath) Resets the path, clearing all segments and points.
+--- @field move_to fun(self: Rotoris.LuaCanvas.CanvasPath, x: number, y: number) Moves the current point to (x, y), starting a new contour.
+--- @field line_to fun(self: Rotoris.LuaCanvas.CanvasPath, x: number, y: number) Draws a line segment from the current point to (x, y).
+--- @field quad_to fun(self: Rotoris.LuaCanvas.CanvasPath, x1: number, y1: number, x2: number, y2: number) Draws a Quadratic Bezier curve to (x2, y2), using (x1, y1) as the control point.
+--- @field cubic_to fun(self: Rotoris.LuaCanvas.CanvasPath, x1: number, y1: number, x2: number, y2: number, x3: number, y3: number) Draws a Cubic Bezier curve to (x3, y3), using (x1, y1) and (x2, y2) as the control points.
+--- @field close fun(self: Rotoris.LuaCanvas.CanvasPath) Closes the current contour.
+--- @field add_rect fun(self: Rotoris.LuaCanvas.CanvasPath, x: number, y: number, width: number, height: number, direction?: SkiaSharp.SKPathDirection) Adds a rectangle to the path.
+--- @field add_circle fun(self: Rotoris.LuaCanvas.CanvasPath, cx: number, cy: number, radius: number, direction?: SkiaSharp.SKPathDirection) Adds a circle to the path.
+--- @field add_arc fun(self: Rotoris.LuaCanvas.CanvasPath, x: number, y: number, width: number, height: number, startAngle: number, sweepAngle: number, forceMoveTo?: boolean) Adds an arc segment to the path as a new contour.
+--- @field add_oval fun(self: Rotoris.LuaCanvas.CanvasPath, x: number, y: number, width: number, height: number, direction?: SkiaSharp.SKPathDirection) Adds an oval (ellipse) to the path.
+--- @field add_path fun(self: Rotoris.LuaCanvas.CanvasPath, anotherPath: Rotoris.LuaCanvas.CanvasPath|SkiaSharp.SKPath, x?: number, y?: number) Adds all contours from another path to the current path, with optional offset.
+--- @field add_path_reverse fun(self: Rotoris.LuaCanvas.CanvasPath, anotherPath: Rotoris.LuaCanvas.CanvasPath|SkiaSharp.SKPath) Adds all contours from another path in reverse to the current path.
+--- @field add_poly fun(self: Rotoris.LuaCanvas.CanvasPath, points: SkiaSharp.SKPoint[], close?: boolean) Adds a polygon to the path.
+--- @field add_round_rect fun(self: Rotoris.LuaCanvas.CanvasPath, x: number, y: number, width: number, height: number, rx: number, ry: number, direction?: SkiaSharp.SKPathDirection) Adds a rounded rectangle to the path.
+--- @field arc_to fun(self: Rotoris.LuaCanvas.CanvasPath, p1X: number, p1Y: number, p2X: number, p2Y: number, radius: number) Adds a circular arc segment to (x2, y2), using (x1, y1) as the tangent control point.
+--- @field set_fill_type fun(self: Rotoris.LuaCanvas.CanvasPath, fillType: SkiaSharp.SKPathFillType) Sets the path's fill rule.
+--- @field get_fill_type fun(self: Rotoris.LuaCanvas.CanvasPath): SkiaSharp.SKPathFillType Gets the path's fill rule.
+--- @field get fun(self: Rotoris.LuaCanvas.CanvasPath): SkiaSharp.SKPath Gets the internal SKPath object.

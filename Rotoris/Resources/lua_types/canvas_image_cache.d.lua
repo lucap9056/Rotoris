@@ -1,0 +1,5 @@
+--- @class Rotoris.LuaCanvas.ImageCache
+--- @field load_bytes fun(self:Rotoris.LuaCanvas.ImageCache, imageId: string, imageData: bytes): SkiaSharp.SKBitmap Loads an image from the provided byte array and caches it with the specified ID.
+--- @field get fun(self:Rotoris.LuaCanvas.ImageCache, imagePath: string): SkiaSharp.SKBitmap|nil Retrieves the cached image for the specified file path, loading it if not already cached.
+--- @field load fun(self:Rotoris.LuaCanvas.ImageCache, filePath: string): SkiaSharp.SKImageInfo|nil Loads the image info from the specified file path.
+--- @field dispose fun(self:Rotoris.LuaCanvas.ImageCache, filePath: string): boolean Disposes of the cached image associated with the specified file path.

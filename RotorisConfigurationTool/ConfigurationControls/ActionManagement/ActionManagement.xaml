@@ -1,0 +1,215 @@
+﻿<UserControl x:Class="RotorisConfigurationTool.ConfigurationControls.ActionManagement.Component"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:RotorisConfigurationTool.ConfigurationControls.ActionManagement"
+             xmlns:c="clr-namespace:RotorisConfigurationTool.ConfigurationControls"
+             xmlns:i18n="clr-namespace:RotorisConfigurationTool.Properties.ConfigurationControls.ActionManagement"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance c:MainContext}"
+             >
+    <UserControl.Resources>
+        <local:ActionManagementStateConverter x:Key="ActionManagementStateConverter" />
+        <local:ActionItemStateConverter x:Key="ActionItemStateConverter" />
+    </UserControl.Resources>
+    <Grid Margin="15,0,0,0" MinWidth="240" MaxHeight="240"
+          DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource ActionManagementStateConverter}}"
+          d:DataContext="{d:DesignInstance local:ActionManagementState}"
+          >
+        <GroupBox
+            Header="{x:Static i18n:I18n.Actions}"
+            >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+
+                <ListView 
+                    Grid.Row="0"
+                    SelectionMode="Single"
+                    SelectionChanged="ListView_SelectionChanged"
+                    ItemsSource="{Binding ActionList}"
+                  >
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+
+                            <Grid MinWidth="100" MinHeight="28" d:DataContext="{d:DesignInstance local:ActionItemState}">
+                                <Grid.DataContext>
+                                    <MultiBinding Converter="{StaticResource ActionItemStateConverter}">
+                                        <Binding RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
+                                        <Binding Path="." />
+                                        <Binding RelativeSource="{RelativeSource AncestorType={x:Type Grid},AncestorLevel=2}" Path="DataContext.RemoveActionCommand" />
+                                    </MultiBinding>
+                                </Grid.DataContext>
+                                <Grid.ContextMenu>
+                                    <ContextMenu>
+
+                                        <MenuItem Header="{x:Static i18n:I18n.Rename}">
+                                            <MenuItem.InputBindings>
+                                                <MouseBinding 
+                                                    MouseAction="LeftClick" 
+                                                    Command="{Binding EditActionNameCommand}" 
+                                                    />
+                                            </MenuItem.InputBindings>
+                                        </MenuItem>
+
+                                        <MenuItem Header="{x:Static i18n:I18n.Remove}">
+                                            <MenuItem.InputBindings>
+                                                <MouseBinding 
+                                                    MouseAction="LeftClick" 
+                                                    Command="{Binding RemoveActionCommand}"
+                                                    CommandParameter="{Binding ActionName}"
+                                                    />
+                                            </MenuItem.InputBindings>
+                                        </MenuItem>
+
+                                        <MenuItem Header="{x:Static i18n:I18n.Edit}">
+
+                                            <MenuItem Header="{x:Static i18n:I18n.Notepad}">
+                                                <MenuItem.InputBindings>
+                                                    <MouseBinding 
+                                                    MouseAction="LeftClick" 
+                                                    Command="{Binding UseNotepadCommand}" 
+                                                    />
+                                                </MenuItem.InputBindings>
+                                            </MenuItem>
+
+                                            <MenuItem 
+                                                Header="{x:Static i18n:I18n.VSCode}"
+                                                Visibility="{Binding AvailableEditors.IsVSCodeAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                >
+                                                <MenuItem.InputBindings>
+                                                    <MouseBinding 
+                                                    MouseAction="LeftClick" 
+                                                    Command="{Binding UseVSCodeCommand}" 
+                                                    />
+                                                </MenuItem.InputBindings>
+                                            </MenuItem>
+
+                                            <MenuItem 
+                                                Header="{x:Static i18n:I18n.NotepadPlusPlus}"
+                                                Visibility="{Binding AvailableEditors.IsNotepadPlusPlusAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                >
+                                                <MenuItem.InputBindings>
+                                                    <MouseBinding 
+                                                    MouseAction="LeftClick" 
+                                                    Command="{Binding UseNotepadPlusPlusCommand}" 
+                                                    />
+                                                </MenuItem.InputBindings>
+                                            </MenuItem>
+
+                                        </MenuItem>
+
+
+                                    </ContextMenu>
+                                </Grid.ContextMenu>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Button 
+                                    Grid.Column="0" Grid.ColumnSpan="2" Panel.ZIndex="-1" 
+                                    Width="Auto" Height="Auto" Opacity="0"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                </Button>
+
+                                <TextBlock 
+                                    IsHitTestVisible="False"
+                                    Background="Transparent"
+                                    Text="{Binding ActionName, Converter={StaticResource StringSuffixRemoverConverter}, ConverterParameter='.lua'}"
+                                    Grid.Column="0" 
+                                    FontWeight="Bold"
+                                    Margin="10, 0, 5, 0"
+                                    VerticalAlignment="Center"
+                                    Visibility="{Binding IsEditing,Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='Reverse'}"
+                                    />
+
+                                <TextBox 
+                                    Grid.Column="0"
+                                    FontWeight="Bold"
+                                    Margin="10, 0, 5, 0"
+                                    VerticalAlignment="Center"
+                                    Text="{
+                                    Binding EditingActionName, 
+                                    Converter={StaticResource StringSuffixRemoverConverter}, 
+                                    ConverterParameter='.lua',
+                                    UpdateSourceTrigger=PropertyChanged,
+                                    Mode=TwoWay
+                                    }"
+                                    Visibility="{Binding IsEditing,Converter={StaticResource BooleanToVisibilityConverter}}"
+                                    IsVisibleChanged="EditTextIsVisibleChanged"
+                                    PreviewKeyDown="EditTextKeyDown"
+                                    LostFocus="EditTextLostFocus"
+                                    />
+
+                                <Button 
+                                    Grid.Column="1"
+                                    Width="20"
+                                    Background="Transparent"
+                                    >
+                                    <Button.InputBindings>
+                                        <MouseBinding 
+                                            MouseAction="LeftClick" 
+                                            Command="{Binding ShowContextMenuCommand}" 
+                                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}}" 
+                                            />
+                                    </Button.InputBindings>
+                                </Button>
+
+
+                            </Grid>
+
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox 
+                        Text="{
+                        Binding AppendInputValue, 
+                        Converter={StaticResource StringSuffixRemoverConverter}, 
+                        ConverterParameter='.lua',
+                        UpdateSourceTrigger=PropertyChanged, 
+                        Mode=TwoWay
+                        }"
+                        Grid.Column="0"
+                        FontSize="14"
+                        Height="32"
+                        Margin="4,4,0,4"
+                        PreviewKeyDown="AppendActionKeyDown"
+                        />
+                    <Button 
+                        Grid.Column="1"
+                        Content="{x:Static i18n:I18n.Append}" 
+                        FontSize="14" 
+                        Height="30"
+                        Padding="10,2"
+                        Margin="2,4,4,4"
+                        HorizontalAlignment="Center"
+                        >
+                        <Button.InputBindings>
+                            <MouseBinding MouseAction="LeftClick" Command="{Binding AppendActionCommand}" />
+                        </Button.InputBindings>
+                    </Button>
+                </Grid>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

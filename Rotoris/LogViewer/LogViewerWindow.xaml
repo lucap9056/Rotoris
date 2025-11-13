@@ -1,0 +1,70 @@
+﻿<Window x:Class="Rotoris.LogViewer.LogViewerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i18n="clr-namespace:Rotoris.Properties.Window"
+        xmlns:local="clr-namespace:Rotoris.LogViewer"
+        mc:Ignorable="d"
+        Visibility="Visible"
+        Title="Rotoris Logs" 
+        Height="450" 
+        Width="800" 
+        WindowStartupLocation="CenterScreen"
+        ThemeMode="System"
+        FontFamily="Consolas"
+        >
+    <DockPanel>
+        <Grid
+            Height="28"
+            DockPanel.Dock="Top"
+            >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button 
+                Content="{x:Static i18n:I18n.Exit}"
+                Grid.Column="0"
+                Width="80"
+                FontSize="12"
+                Padding="0"
+                Margin="10,0"
+                Click="ExitButton_Click"
+                />
+            <Button 
+                Content="{x:Static i18n:I18n.Reload}"
+                Grid.Column="1"
+                Width="80"
+                FontSize="12"
+                Padding="0"
+                Margin="0"
+                Click="ReloadButton_Click"
+                />
+        </Grid>
+
+        <RichTextBox 
+            DockPanel.Dock="Bottom"
+            x:Name="Logs"
+            Background="Transparent"
+            Foreground="White"
+            FontFamily="Consolas"
+            FontSize="14"
+            VerticalScrollBarVisibility="Auto"
+            IsReadOnly="True"
+        >
+            <FlowDocument
+                FontFamily="Consolas"
+                FontSize="14"
+                >
+                <FlowDocument.Resources>
+                    <Style TargetType="{x:Type Paragraph}">
+                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="LineHeight" Value="1"/>
+                    </Style>
+                </FlowDocument.Resources>
+            </FlowDocument>
+        </RichTextBox>
+    </DockPanel>
+</Window>

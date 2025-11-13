@@ -1,0 +1,22 @@
+--- @class Rotoris.LuaCanvas.PaintCache
+--- @field create fun(self: Rotoris.LuaCanvas.PaintCache, name: string, table: table): SkiaSharp.SKPaint Creates or retrieves a cached SKPaint object based on the provided name and configuration table.
+--- @field set fun(self: Rotoris.LuaCanvas.PaintCache, paint: SkiaSharp.SKPaint) Sets the current SKPaint to be used for drawing operations.
+--- @field set fun(self: Rotoris.LuaCanvas.PaintCache, name: string) Sets the current SKPaint to the named paint from the cache.
+--- @field update fun(self: Rotoris.LuaCanvas.PaintCache, action: fun(editor: Rotoris.LuaCanvas.PaintCache.Editor)) Updates the current SKPaint using the provided action function that receives a Paint.Editor.
+--- @field update fun(self: Rotoris.LuaCanvas.PaintCache, name: string, action: fun(editor: Rotoris.LuaCanvas.PaintCache.Editor)): boolean Updates a named SKPaint in the cache using the provided action function that receives a Paint.Editor. Returns true if the paint was found and updated, false otherwise.
+--- @field get fun(self: Rotoris.LuaCanvas.PaintCache, name: string?): SkiaSharp.SKPaint Retrieves the current SKPaint or a named SKPaint from the cache.
+--- @field dispose fun(self: Rotoris.LuaCanvas.PaintCache, name: string) Disposes and removes a named SKPaint from the cache.
+--- @field dispose fun(self: Rotoris.LuaCanvas.PaintCache) Disposes all cached SKPaint objects and clears the cache.
+
+--- @class Rotoris.LuaCanvas.PaintCache.Editor
+--- @field set_color fun(self: Rotoris.LuaCanvas.PaintCache.Editor, hexColor: string) Sets the color of the paint using a hex color string (e.g., "#RRGGBB" or "#AARRGGBB").
+--- @field set_style fun(self: Rotoris.LuaCanvas.PaintCache.Editor, style: SkiaSharp.SKPaintStyle) Sets the style of the paint.
+--- @field set_blend_mode fun(self: Rotoris.LuaCanvas.PaintCache.Editor, mode: SkiaSharp.SKBlendMode) Sets the blend mode of the paint.
+--- @field set_antialias fun(self: Rotoris.LuaCanvas.PaintCache.Editor, enabled: boolean) Enables or disables antialiasing for the paint.
+--- @field set_dither fun(self: Rotoris.LuaCanvas.PaintCache.Editor, enabled: boolean) Enables or disables dithering for the paint.
+--- @field set_stroke_width fun(self: Rotoris.LuaCanvas.PaintCache.Editor, width: number) Sets the stroke width of the paint.
+--- @field set_stroke_cap fun(self: Rotoris.LuaCanvas.PaintCache.Editor, cap: SkiaSharp.SKStrokeCap) Sets the stroke cap of the paint.
+--- @field set_stroke_join fun(self: Rotoris.LuaCanvas.PaintCache.Editor, join: SkiaSharp.SKStrokeJoin) Sets the stroke join of the paint.
+--- @field set_stroke_miter fun(self: Rotoris.LuaCanvas.PaintCache.Editor, miter: number) Sets the stroke miter of the paint.
+--- @field set_path_effect fun(self: Rotoris.LuaCanvas.PaintCache.Editor, effect: SkiaSharp.SKPathEffect?) Sets the path effect of the paint.
+--- @field set_shader fun(self: Rotoris.LuaCanvas.PaintCache.Editor, shader: SkiaSharp.SKShader?) Sets the shader of the paint.

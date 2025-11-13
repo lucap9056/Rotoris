@@ -1,0 +1,3 @@
+--- @class bytes
+
+---@class Process

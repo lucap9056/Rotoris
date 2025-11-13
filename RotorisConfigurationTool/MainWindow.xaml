@@ -1,0 +1,48 @@
+﻿<Window x:Class="RotorisConfigurationTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RotorisConfigurationTool"
+        xmlns:c="clr-namespace:RotorisConfigurationTool.ConfigurationControls"
+        xmlns:i18n="clr-namespace:RotorisConfigurationTool.Properties.MainWindow"
+        xmlns:AppInfo="clr-namespace:RotorisConfigurationTool.ConfigurationControls.AppInfo"
+        xmlns:Appearance="clr-namespace:RotorisConfigurationTool.ConfigurationControls.UiAppearance"
+        xmlns:MenuManagement="clr-namespace:RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement"
+        xmlns:ActionManagement="clr-namespace:RotorisConfigurationTool.ConfigurationControls.ActionManagement"
+        xmlns:KeyBindings="clr-namespace:RotorisConfigurationTool.ConfigurationControls.KeyBindings"
+        xmlns:Startup="clr-namespace:RotorisConfigurationTool.ConfigurationControls.Startup"
+        mc:Ignorable="d"
+        ThemeMode="System"
+        Visibility="Visible"
+        Title="Rotoris Configuration Tool"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        SizeToContent="WidthAndHeight"
+        >
+    <Window.DataContext>
+        <c:MainContext />
+    </Window.DataContext>
+    <Grid Margin="15">
+        <TabControl TabStripPlacement="Left">
+            <TabItem Header="App">
+                <AppInfo:Component />
+            </TabItem>
+            <TabItem Header="{x:Static i18n:I18n.Appearance}">
+                <Appearance:Component />
+            </TabItem>
+            <TabItem Header="{x:Static i18n:I18n.MenuManagement}">
+                <MenuManagement:Component />
+            </TabItem>
+            <TabItem Header="{x:Static i18n:I18n.ActionManagement}">
+                <ActionManagement:Component />
+            </TabItem>
+            <TabItem Header="{x:Static i18n:I18n.KeyBindings}">
+                <KeyBindings:Component />
+            </TabItem>
+            <TabItem Header="{x:Static i18n:I18n.Startup}">
+                <Startup:Component />
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

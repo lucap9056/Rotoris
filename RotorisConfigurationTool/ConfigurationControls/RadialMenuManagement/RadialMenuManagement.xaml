@@ -1,0 +1,213 @@
+﻿<UserControl x:Class="RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement.Component"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:local="clr-namespace:RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement"
+             xmlns:c="clr-namespace:RotorisConfigurationTool.ConfigurationControls"
+             xmlns:i18n="clr-namespace:RotorisConfigurationTool.Properties.ConfigurationControls.RadialMenuManagement"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance c:MainContext}"
+             >
+    <UserControl.Resources>
+        <local:RadialMenuManagementStateConverter x:Key="RadialMenuManagementStateConverter" />
+        <local:RadialMenuItemStateConverter x:Key="RadialMenuItemStateConverter" />
+    </UserControl.Resources>
+    <Grid Margin="15" MinWidth="240"
+          DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource RadialMenuManagementStateConverter}}"
+          d:DataContext="{d:DesignInstance local:RadialMenuManagementState}"
+          >
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+
+        <Button 
+            Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="-1" 
+            Width="Auto" Height="Auto" Opacity="0"
+            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            />
+
+        <GroupBox
+            Grid.Row="0"
+            Margin="0,0,0,10"
+            Padding="0,4,0,0"
+            >
+            <Button 
+                Content="{x:Static i18n:I18n.RootMenu}" 
+                FontSize="14" 
+                Margin="4"
+                Padding="10,2"
+                HorizontalAlignment="Center"
+                >
+                <Button.InputBindings>
+                    <MouseBinding MouseAction="LeftClick" Command="{Binding EditMainRadialMenuCommand}" />
+                </Button.InputBindings>
+            </Button>
+        </GroupBox>
+
+
+        <GroupBox
+            Grid.Row="1" 
+            Header="{x:Static i18n:I18n.Menus}"
+            >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+
+                <ListView 
+                    Grid.Row="0"
+                    SelectionMode="Single"
+                    SelectionChanged="ListView_SelectionChanged"
+                    ItemsSource="{Binding RadialMenuList}"
+                  >
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid MinWidth="100" MinHeight="28" d:DataContext="{d:DesignInstance local:RadialMenuItemState}">
+                                <Grid.DataContext>
+                                    <MultiBinding Converter="{StaticResource RadialMenuItemStateConverter}">
+                                        <Binding RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
+                                        <Binding Path="." />
+                                        <Binding RelativeSource="{RelativeSource AncestorType={x:Type Grid},AncestorLevel=2}" Path="DataContext.RemoveMenuCommand" />
+                                    </MultiBinding>
+                                </Grid.DataContext>
+                                <Grid.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="rename">
+                                            <MenuItem.InputBindings>
+                                                <MouseBinding 
+                                                    MouseAction="LeftClick" 
+                                                    Command="{Binding EditMenuNameCommand}" 
+                                                    />
+                                            </MenuItem.InputBindings>
+                                        </MenuItem>
+                                        <MenuItem Header="remove">
+                                            <MenuItem.InputBindings>
+                                                <MouseBinding 
+                                                    MouseAction="LeftClick" 
+                                                    Command="{Binding RemoveMenuCommand}"
+                                                    CommandParameter="{Binding MenuName}"
+                                                    />
+                                            </MenuItem.InputBindings>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </Grid.ContextMenu>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Button 
+                                    Grid.Column="0" Grid.ColumnSpan="2" Panel.ZIndex="-1" 
+                                    Width="Auto" Height="Auto" Opacity="0"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Button.InputBindings>
+                                        <MouseBinding MouseAction="LeftClick" Command="{Binding EditMenuOptionsCommand}" />
+                                    </Button.InputBindings>
+                                </Button>
+
+                                <TextBlock 
+                                    IsHitTestVisible="False"
+                                    Background="Transparent"
+                                    Text="{
+                                    Binding MenuName,
+                                    Converter={StaticResource StringSuffixRemoverConverter},
+                                    ConverterParameter='.json'
+                                    }"
+                                    Grid.Column="0" 
+                                    FontWeight="Bold"
+                                    Margin="10, 0, 5, 0"
+                                    VerticalAlignment="Center"
+                                    Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='Reverse'}"
+                                    />
+
+                                <TextBox 
+                                    Grid.Column="0"
+                                    FontWeight="Bold"
+                                    Margin="10, 0, 5, 0"
+                                    VerticalAlignment="Center"
+                                    Text="{
+                                    Binding EditingMenuName,
+                                    Converter={StaticResource StringSuffixRemoverConverter},
+                                    ConverterParameter='.json',
+                                    UpdateSourceTrigger=PropertyChanged
+                                    }"
+                                    Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                    IsVisibleChanged="EditTextIsVisibleChanged"
+                                    PreviewKeyDown="EditTextKeyDown"
+                                    LostFocus="EditTextLostFocus"
+                                    />
+
+                                <Button 
+                                    Grid.Column="1"
+                                    Content="..."
+                                    Width="20"
+                                    Background="Transparent"
+                                    >
+                                    <Button.InputBindings>
+                                        <MouseBinding 
+                                            MouseAction="LeftClick" 
+                                            Command="{Binding ShowContextMenuCommand}" 
+                                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}}}" 
+                                            />
+                                    </Button.InputBindings>
+                                </Button>
+
+
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox 
+                        Grid.Column="0"
+                        FontSize="14"
+                        Height="32"
+                        Margin="4,4,0,4"
+                        Text="{
+                        Binding AppendInputValue, 
+                        Converter={StaticResource StringSuffixRemoverConverter},
+                        ConverterParameter='.json',
+                        UpdateSourceTrigger=PropertyChanged,
+                        Mode=TwoWay}"
+                        PreviewKeyDown="AppendMenuKeyDown"
+                        />
+                    <Button 
+                        Grid.Column="1"
+                        Content="{x:Static i18n:I18n.Append}" 
+                        FontSize="14" 
+                        Height="30"
+                        Padding="10,2"
+                        Margin="2,4,4,4"
+                        HorizontalAlignment="Center"
+                        >
+                        <Button.InputBindings>
+                            <MouseBinding MouseAction="LeftClick" Command="{Binding AppendMenuCommand}" />
+                        </Button.InputBindings>
+                    </Button>
+                </Grid>
+            </Grid>
+        </GroupBox>
+
+    </Grid>
+</UserControl>

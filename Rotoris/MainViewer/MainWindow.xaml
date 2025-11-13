@@ -1,0 +1,211 @@
+﻿<Window x:Class="Rotoris.MainViewer.MainWindow"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:ui="clr-namespace:RotorisLib.UI;assembly=RotorisLib"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:Rotoris.MainViewer"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Background="Transparent"
+        AllowsTransparency="True"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        WindowStyle="None"
+        Focusable="False"
+        x:Name="MWindow"
+        Title="Rotoris" 
+        Topmost="True"
+        Height="410" 
+        Width="410"
+        >
+    <Window.Resources>
+        <ui:State x:Key="State" />
+        <ui:OptionIconVisualSourceConverter x:Key="OptionIconVisualSourceConverter" />
+        <ui:RenderIconContextInputConverter x:Key="RenderIconContextInputConverter" />
+        <ui:FocusedOptionRotationConverter x:Key="FocusedOptionRotationConverter" />
+        <ui:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <ui:RenderContextInputConverter x:Key="RenderContextInputConverter" />
+        <ui:OptionsVisibilityConverter x:Key="OptionsVisibilityConverter" />
+    </Window.Resources>
+    <Grid DataContext="{DynamicResource State}">
+
+        <!-- Container for the radial menu elements (icons and focused segment indicator) -->
+        <Grid
+            Visibility="{
+            Binding MenuOptions.Length,
+            Converter={StaticResource OptionsVisibilityConverter}
+            }"
+            >
+
+            <!-- Background visual for the outer menu ring -->
+            <Path 
+            Stroke="{Binding ThemeBrushes.AccentBrush}"
+            Fill="{Binding ThemeBrushes.BackgroundBrush}"
+            StrokeThickness="3"
+            >
+                <Path.Data>
+                    <CombinedGeometry GeometryCombineMode="Exclude">
+                        <CombinedGeometry.Geometry1>
+                            <EllipseGeometry 
+                            RadiusX="{Binding OutsideRadius}" 
+                            RadiusY="{Binding OutsideRadius}" 
+                            Center="{Binding CenterPoint}"
+                            />
+                        </CombinedGeometry.Geometry1>
+                        <CombinedGeometry.Geometry2>
+                            <EllipseGeometry 
+                            RadiusX="{Binding InsideRadius}" 
+                            RadiusY="{Binding InsideRadius}" 
+                            Center="{Binding CenterPoint}"
+                            />
+                        </CombinedGeometry.Geometry2>
+                    </CombinedGeometry>
+                </Path.Data>
+            </Path>
+
+            <!-- Segment indicator for the currently focused menu option -->
+            <Path x:Name="FocusedSegmentIndicator" Fill="{Binding ThemeBrushes.AccentBrush}">
+                <Path.Data>
+                    <PathGeometry>
+                        <PathFigure StartPoint="{Binding OptionSector.OuterStartPoint}">
+                            <PathFigure.Segments>
+                                <ArcSegment
+                                    Point="{Binding OptionSector.OuterEndPoint}"  Size="{Binding OptionSector.OuterRadiusSize}"  RotationAngle="0"
+                                    IsLargeArc="{Binding OptionSector.IsLargeArc}"  SweepDirection="Clockwise"
+                                    IsStroked="True" />
+
+                                <LineSegment
+                                    Point="{Binding OptionSector.InnerStartPoint}"  IsStroked="True" />
+
+                                <ArcSegment
+                                    Point="{Binding OptionSector.InnerEndPoint}"  Size="{Binding OptionSector.InnerRadiusSize}"  RotationAngle="0"
+                                    IsLargeArc="{Binding OptionSector.IsLargeArc}"
+                                    SweepDirection="Counterclockwise"
+                                    IsStroked="True" />
+
+                            </PathFigure.Segments>
+                        </PathFigure>
+                    </PathGeometry>
+                </Path.Data>
+                <Path.RenderTransform>
+                    <MultiBinding Converter="{StaticResource FocusedOptionRotationConverter}">
+                        <Binding Path="FocusedMenuOptionIndex" />
+                        <Binding Path="MenuOptions.Length" />
+                        <Binding ElementName="MWindow" Path="ActualWidth" />
+                        <Binding ElementName="MWindow" Path="ActualHeight" />
+                    </MultiBinding>
+                </Path.RenderTransform>
+            </Path>
+
+            <!-- Display and layout for the individual menu option icons -->
+            <Grid x:Name="OptionsContainer" IsHitTestVisible="False">
+                <ui:RenderContextAttacher.ContextData>
+                    <MultiBinding Converter="{StaticResource RenderContextInputConverter}">
+                        <Binding Path="MenuOptions" />
+                        <Binding ElementName="MWindow" Path="ActualWidth" />
+                        <Binding ElementName="MWindow" Path="ActualHeight" />
+                    </MultiBinding>
+                </ui:RenderContextAttacher.ContextData>
+
+                <ItemsControl ItemsSource="{Binding MenuOptions}" AlternationCount="{Binding MenuOptions.Length}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas IsItemsHost="True"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Canvas x:Name="IconContainer">
+                                <ui:RenderContextAttacher.IconRect>
+                                    <MultiBinding Converter="{StaticResource RenderIconContextInputConverter}">
+                                        <Binding 
+                                            Path="(ui:RenderContextAttacher.ContextData)" 
+                                            ElementName="OptionsContainer" 
+                                            />
+                                        <Binding 
+                                            RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type ContentPresenter}}"
+                                            Path="(ItemsControl.AlternationIndex)" 
+                                            />
+                                    </MultiBinding>
+                                </ui:RenderContextAttacher.IconRect>
+                                <Image 
+                                    Width="{Binding ElementName=IconContainer, Path=(ui:RenderContextAttacher.IconRect).Width }"
+                                    Height="{Binding ElementName=IconContainer, Path=(ui:RenderContextAttacher.IconRect).Height }"
+                                    Source="{Binding .,Converter={StaticResource OptionIconVisualSourceConverter}}"
+                                    Stretch="Uniform"
+                                    SnapsToDevicePixels="True"
+                                    Canvas.Top="{Binding ElementName=IconContainer, Path=(ui:RenderContextAttacher.IconRect).Top }"
+                                    Canvas.Left="{Binding ElementName=IconContainer, Path=(ui:RenderContextAttacher.IconRect).Left }"
+                                    />
+                            </Canvas>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </Grid>
+
+
+        <!-- The central circular area for displaying messages or canvas content -->
+        <Grid>
+
+            <!-- Central background circle -->
+            <Path
+                Stroke="{Binding ThemeBrushes.AccentBrush}"
+                Fill="{Binding ThemeBrushes.BackgroundBrush}"
+                StrokeThickness="3"
+                >
+                <Path.Data>
+                    <CombinedGeometry GeometryCombineMode="Exclude">
+                        <CombinedGeometry.Geometry1>
+                            <EllipseGeometry 
+                    RadiusX="{Binding CenterRadius}" 
+                    RadiusY="{Binding CenterRadius}" 
+                    Center="{Binding CenterPoint}"
+                    />
+                        </CombinedGeometry.Geometry1>
+                    </CombinedGeometry>
+                </Path.Data>
+            </Path>
+
+            <!-- Image canvas overlay (for bitmap display) -->
+            <Path
+                Visibility="{
+                Binding MessageCanvasBitmap, 
+                Converter={StaticResource BooleanToVisibilityConverter}
+                }">
+                <Path.Data>
+                    <CombinedGeometry GeometryCombineMode="Exclude">
+                        <CombinedGeometry.Geometry1>
+                            <EllipseGeometry 
+                                RadiusX="{Binding CenterRadius}" 
+                                RadiusY="{Binding CenterRadius}" 
+                                Center="{Binding CenterPoint}"
+                                />
+                        </CombinedGeometry.Geometry1>
+                    </CombinedGeometry>
+                </Path.Data>
+                <Path.Fill>
+                    <ImageBrush 
+                        ImageSource="{Binding MessageCanvasBitmap}" 
+                        Stretch="Uniform" 
+                        />
+                </Path.Fill>
+            </Path>
+
+            <!-- Text block for displaying central messages -->
+            <TextBlock 
+                Text="{
+                Binding MessageContent
+                }"
+                Foreground="{Binding ThemeBrushes.ForegroundBrush}"
+                FontSize="16"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+            />
+        </Grid>
+
+    </Grid>
+</Window>
