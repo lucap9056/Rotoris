@@ -1,0 +1,3 @@
+--- @class Rotoris.LuaSystem
+--- @field exec fun(self:Rotoris.LuaSystem, command: string, ...: string): Process? Executes a system command or opens a file with optional arguments.
+--- @field open fun(self:Rotoris.LuaSystem, targetPath: string) Opens a file or URL with the default associated application.

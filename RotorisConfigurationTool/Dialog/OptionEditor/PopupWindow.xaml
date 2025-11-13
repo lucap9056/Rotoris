@@ -1,0 +1,202 @@
+﻿<Window x:Class="RotorisConfigurationTool.Dialog.OptionEditor.PopupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RotorisConfigurationTool.Dialog.OptionEditor"
+        xmlns:i18n="clr-namespace:RotorisConfigurationTool.Properties.Dialog.OptionEditor"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Title="" SizeToContent="WidthAndHeight"
+        d:DataContext="{d:DesignInstance local:OptionEditorState}"
+        >
+    <Window.Resources>
+        <local:OptionEditorState x:Key="State" />
+        <local:BuiltInOptionNameConverter x:Key="BuiltInOptionNameConverter" />
+        <local:OptionSelectionViewVisibilityConverter x:Key="OptionSelectionViewVisibilityConverter" />
+        <local:I18nResourceConverter x:Key="I18nResourceConverter" />
+    </Window.Resources>
+    <Window.DataContext>
+        <DynamicResource ResourceKey="State" />
+    </Window.DataContext>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="480" />
+            <ColumnDefinition Width="360" />
+        </Grid.ColumnDefinitions>
+
+
+        <GroupBox Header="{x:Static i18n:I18n.Id}" Grid.Row="0" Grid.Column="0">
+            <TextBox 
+                Text="{Binding OptionId, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                Margin="0,5,0,5" 
+                GotFocus="OptionId_GotFocus"
+                />
+        </GroupBox>
+
+        <GroupBox Header="{x:Static i18n:I18n.Icon}" Grid.Row="1" Grid.Column="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBox 
+                    Text="{Binding IconPath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    Grid.Column="0" 
+                    Margin="0,5,5,5"
+                    GotFocus="IconPath_GotFocus"
+                    />
+                <Button 
+                        Content="{x:Static i18n:I18n.Browse}" 
+                        Grid.Column="1" 
+                        Width="80" 
+                        Margin="0,5,0,5"
+                        >
+                    <Button.InputBindings>
+                        <MouseBinding MouseAction="LeftClick" Command="{Binding IconPathBrowseCommand}" />
+                    </Button.InputBindings>
+                </Button>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="{x:Static i18n:I18n.Action}" Grid.Row="2" Grid.Column="0" Margin="0,5,0,5">
+            <TextBox 
+                    Text="{Binding ActionId, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    Grid.Row="0" 
+                    GotFocus="ActionId_GotFocus"
+                    />
+        </GroupBox>
+
+
+        <Grid Grid.Row="3" Grid.Column="0" Margin="0,10,0,0" Height="30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="90" />
+            </Grid.ColumnDefinitions>
+
+            <Button 
+                Grid.Column="0" 
+                Content="{x:Static i18n:I18n.Remove}" 
+                Width="75" 
+                HorizontalAlignment="Left" 
+                >
+                <Button.InputBindings>
+                    <MouseBinding MouseAction="LeftClick" Command="{Binding RemoveCommand}" />
+                </Button.InputBindings>
+            </Button>
+            <Button 
+                Grid.Column="2" 
+                Content="{x:Static i18n:I18n.Save}" 
+                Width="75" 
+                HorizontalAlignment="Center" 
+                >
+                <Button.InputBindings>
+                    <MouseBinding MouseAction="LeftClick" Command="{Binding SaveCommand}" />
+                </Button.InputBindings>
+            </Button>
+            <Button 
+                Grid.Column="3" 
+                Content="{x:Static i18n:I18n.Cancel}" 
+                Width="75" 
+                HorizontalAlignment="Center" 
+                Click="Cancel_Click"
+                />
+        </Grid>
+
+
+
+        <Grid Grid.Row="0" Grid.Column="1" Grid.RowSpan="4" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock 
+                Text="{Binding SelectionViewDescriptionKey, Converter={StaticResource I18nResourceConverter}}"
+                Grid.Row="0" 
+                TextWrapping="Wrap"
+                />
+            <GroupBox Grid.Row="1" Header="{Binding SelectionViewLabelKey, Converter={StaticResource I18nResourceConverter}}">
+                <Grid>
+                    <ListBox
+                        Grid.Row="1"
+                        SelectionChanged="OptionId_SelectionChanged"
+                        SelectionMode="Single"
+                        MaxHeight="200"
+                        Visibility="{
+                        Binding CurrentSelectionView, 
+                        Converter={StaticResource OptionSelectionViewVisibilityConverter}, 
+                        ConverterParameter={x:Static local:OptionSelectionViewType.OptionId}
+                        }"
+                        ItemsSource="{Binding BuiltInOptions}"
+                    >
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ., Converter={StaticResource BuiltInOptionNameConverter}}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <ListBox
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        SelectionChanged="IconPath_SelectionChanged"
+                        SelectionMode="Single"
+                        MaxHeight="200"
+                        HorizontalContentAlignment="Stretch"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        Visibility="{
+                        Binding CurrentSelectionView, 
+                        Converter={StaticResource OptionSelectionViewVisibilityConverter}, 
+                        ConverterParameter={x:Static local:OptionSelectionViewType.IconPath}
+                        }"
+                        ItemsSource="{Binding BuiltInIconPaths}"
+                        >
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Value}" 
+                                   Width="48" Height="48" 
+                                   Margin="5"
+                                       />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <TreeView
+                        Grid.Row="1"
+                        MaxHeight="200"
+                        Visibility="{
+                        Binding CurrentSelectionView, 
+                        Converter={StaticResource OptionSelectionViewVisibilityConverter}, 
+                        ConverterParameter={x:Static local:OptionSelectionViewType.ActionId}
+                        }"
+                        ItemsSource="{Binding ExternalActionTree}"
+                        SelectedItemChanged="TreeView_SelectedItemChanged"
+                        >
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate DataType="{x:Type local:TreeItem}" ItemsSource="{Binding Children}">
+                                <TextBlock Text="{Binding Header}" />
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                </Grid>
+            </GroupBox>
+        </Grid>
+
+    </Grid>
+</Window>

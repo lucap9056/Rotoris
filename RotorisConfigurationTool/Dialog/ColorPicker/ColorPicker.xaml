@@ -1,0 +1,234 @@
+﻿<Window x:Class="RotorisConfigurationTool.Dialog.ColorPicker.PopupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RotorisConfigurationTool.Dialog.ColorPicker"
+        xmlns:i18n="clr-namespace:RotorisConfigurationTool.Properties.Dialog.SizeSlider"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ThemeMode="System"
+        ResizeMode="NoResize"
+        Icon="{x:Null}"
+        Title="" 
+        Height="350" 
+        Width="400"
+        >
+    <Window.Resources>
+        <local:ColorPickerState x:Key="State" />
+        <local:PrimaryHueColorConverter x:Key="PrimaryHueColorConverter" />
+        <local:SelectedColorSVConverter x:Key="SelectedColorSVConverter" />
+        <local:SaturationPositionConverter x:Key="SaturationPositionConverter" />
+        <local:ValuePositionConverter x:Key="ValuePositionConverter" />
+        <local:FinalSelectedColorConverter x:Key="FinalSelectedColorConverter" />
+        <local:HvsToArgbConverter x:Key="HvsToArgbConverter" />
+        <local:HvsToHexConverter x:Key="HvsToHexConverter" />
+    </Window.Resources>
+    <Grid x:Name="MGrid" DataContext="{DynamicResource State}"
+          >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="165" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <local:ColorContextAttacher.PrimaryHueColor>
+            <Binding Path="Hue" Converter="{StaticResource PrimaryHueColorConverter}" />
+        </local:ColorContextAttacher.PrimaryHueColor>
+
+        <local:ColorContextAttacher.SelectedColorSV>
+            <MultiBinding Converter="{StaticResource SelectedColorSVConverter}">
+                <Binding Path="Hue"/>
+                <Binding Path="Saturation" />
+                <Binding Path="Value" />
+            </MultiBinding>
+        </local:ColorContextAttacher.SelectedColorSV>
+
+        <Button 
+            Grid.Row="0" Grid.RowSpan="4"
+            Background="Transparent" Panel.ZIndex="-1" Opacity="0"
+            HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+            />
+        
+        <Grid x:Name="ColorSVArea" Grid.Row="0" Height="150" Margin="0,0,0,10"
+              Background="Black" ClipToBounds="True"
+              MouseLeftButtonDown="ColorSVArea_MouseLeftButtonDown"
+              MouseMove="ColorSVArea_MouseMove"
+              >
+            <Rectangle>
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#FFFFFF" Offset="0.0" />
+                        <GradientStop Color="{Binding ElementName=MGrid, Path=(local:ColorContextAttacher.PrimaryHueColor)}" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+
+            <Rectangle>
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,1" EndPoint="0,0">
+                        <GradientStop Color="#000000" Offset="0.0" />
+                        <GradientStop Color="Transparent" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Canvas>
+                <Ellipse Fill="Transparent" Stroke="White" StrokeThickness="2" Width="14" Height="14">
+                    <Canvas.Top>
+                        <MultiBinding Converter="{StaticResource ValuePositionConverter}">
+                            <Binding ElementName="ColorSVArea" Path="ActualHeight" />
+                            <Binding Path="Value" />
+                        </MultiBinding>
+                    </Canvas.Top>
+                    <Canvas.Left>
+                        <MultiBinding Converter="{StaticResource SaturationPositionConverter}">
+                            <Binding ElementName="ColorSVArea" Path="ActualWidth" />
+                            <Binding Path="Saturation" />
+                        </MultiBinding>
+                    </Canvas.Left>
+                </Ellipse>
+            </Canvas>
+        </Grid>
+
+        <Slider Grid.Row="1" Minimum="0" Maximum="360" Margin="0,0,0,10" Value="{Binding Hue}">
+            <Slider.Template>
+                <ControlTemplate TargetType="{x:Type Slider}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
+                        </Grid.RowDefinitions>
+
+                        <Rectangle Grid.Row="1" Height="15">
+                            <Rectangle.Fill>
+                                <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile">
+                                    <DrawingBrush.Drawing>
+                                        <GeometryDrawing Brush="#E0E0E0">
+                                            <GeometryDrawing.Geometry>
+                                                <GeometryGroup>
+                                                    <RectangleGeometry Rect="0,0,4,4" />
+                                                    <RectangleGeometry Rect="4,4,4,4" />
+                                                </GeometryGroup>
+                                            </GeometryDrawing.Geometry>
+                                        </GeometryDrawing>
+                                    </DrawingBrush.Drawing>
+                                </DrawingBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+
+                        <Rectangle Grid.Row="1" Height="15">
+                            <Rectangle.Fill>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#FFFF0000" Offset="0.0"/>
+                                    <GradientStop Color="#FFFFFF00" Offset="0.166"/>
+                                    <GradientStop Color="#FF00FF00" Offset="0.333"/>
+                                    <GradientStop Color="#FF00FFFF" Offset="0.5"/>
+                                    <GradientStop Color="#FF0000FF" Offset="0.666"/>
+                                    <GradientStop Color="#FFFF00FF" Offset="0.833"/>
+                                    <GradientStop Color="#FFFF0000" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+
+                        <Track Grid.Row="1" Name="PART_Track">
+                            <Track.Thumb>
+                                <Thumb Width="10" Height="20" Background="White" BorderBrush="Black" BorderThickness="1"/>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Slider.Template>
+            <Slider.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                </LinearGradientBrush>
+            </Slider.Background>
+        </Slider>
+
+        <Slider Grid.Row="2" Minimum="0" Maximum="255" Margin="0,0,0,10" Value="{Binding Alpha}">
+            <Slider.Template>
+                <ControlTemplate TargetType="{x:Type Slider}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
+                        </Grid.RowDefinitions>
+
+                        <Rectangle Grid.Row="1" Height="15">
+                            <Rectangle.Fill>
+                                <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile">
+                                    <DrawingBrush.Drawing>
+                                        <GeometryDrawing Brush="#E0E0E0">
+                                            <GeometryDrawing.Geometry>
+                                                <GeometryGroup>
+                                                    <RectangleGeometry Rect="0,0,4,4" />
+                                                    <RectangleGeometry Rect="4,4,4,4" />
+                                                </GeometryGroup>
+                                            </GeometryDrawing.Geometry>
+                                        </GeometryDrawing>
+                                    </DrawingBrush.Drawing>
+                                </DrawingBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+
+                        <Rectangle Grid.Row="1" Height="15">
+                            <Rectangle.Fill>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#00FF0000" Offset="0.0"/>
+                                    <GradientStop Color="{Binding ElementName=MGrid,Path=(local:ColorContextAttacher.SelectedColorSV)}" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+
+                        <Track Grid.Row="1" Name="PART_Track">
+                            <Track.Thumb>
+                                <Thumb Width="10" Height="20" Background="White" BorderBrush="Black" BorderThickness="1"/>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Slider.Template>
+        </Slider>
+
+        <Grid Grid.Row="3" Margin="10,5" Cursor="">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="80" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="32" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Column="0" Grid.Row="0" Text="HEX:" VerticalAlignment="Center" FontWeight="Bold" />
+            <TextBox Grid.Column="1" Grid.Row="0" Width="Auto" Margin="10,0" PreviewKeyDown="TextBox_PreviewKeyDown">
+                <TextBox.Text>
+                    <MultiBinding Converter="{StaticResource HvsToHexConverter}" Mode="TwoWay">
+                        <Binding Path="Hue" />
+                        <Binding Path="Saturation" />
+                        <Binding Path="Value" />
+                        <Binding Path="Alpha" />
+                    </MultiBinding>
+                </TextBox.Text>
+            </TextBox>
+
+            <TextBlock Grid.Column="0" Grid.Row="2" Text="ARGB:" VerticalAlignment="Center" FontWeight="Bold"/>
+            <TextBox Grid.Column="1" Grid.Row="2" Width="Auto" Margin="10,0" PreviewKeyDown="TextBox_PreviewKeyDown">
+                <TextBox.Text>
+                    <MultiBinding Converter="{StaticResource HvsToArgbConverter}" Mode="TwoWay">
+                        <Binding Path="Hue" />
+                        <Binding Path="Saturation" />
+                        <Binding Path="Value" />
+                        <Binding Path="Alpha" />
+                    </MultiBinding>
+                </TextBox.Text>
+            </TextBox>
+
+            <Button Grid.Column="2" Grid.Row="2" Content="{x:Static i18n:I18n.Confirm}" Width="75" Height="30" Click="Confirm_Click" />
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,5 @@
+--- @class Rotoris.LuaCanvas.FontCache
+--- @field load_from_file fun(self: Rotoris.LuaCanvas.FontCache, familyName: string, filePath: string) Loads a font from the specified file and associates it with the given family name.
+--- @field get fun(self: Rotoris.LuaCanvas.FontCache, familyName: string, fontSize: number): SkiaSharp.SKFont Retrieves the font associated with the given family name and font size, creating it if it does not exist.
+--- @field dispose fun(self: Rotoris.LuaCanvas.FontCache, familyName: string, fontSize: number): boolean Disposes the font associated with the given family name and font size.
+--- @field dispose_by_family fun(self: Rotoris.LuaCanvas.FontCache, familyName: string): boolean Disposes all fonts and the typeface associated with the given family name.
