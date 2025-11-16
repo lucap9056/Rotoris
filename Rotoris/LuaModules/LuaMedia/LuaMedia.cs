@@ -21,7 +21,7 @@ namespace Rotoris.LuaModules.LuaMedia
 --- @field play_or_pause_async fun(self: Rotoris.LuaMedia, id: string?): Rotoris.Async<boolean> Asynchronously toggles play/pause for the specified session ID or the current session if no ID is provided.
 --- @field skip_next_async fun(self: Rotoris.LuaMedia, id: string?): Rotoris.Async<boolean?> Asynchronously skips to the next track for the specified session ID or the current session if no ID is provided.
 --- @field skip_previous_async fun(self: Rotoris.LuaMedia, id: string?): Rotoris.Async<boolean?> Asynchronously skips to the previous track for the specified session ID or the current session if no ID is provided.
---- @field get_media_image_uris_async fun(self: Rotoris.LuaMedia, id: string?): Rotoris.Async<Rotoris.MediaImageUris?> Asynchronously gets the media image URIs for the specified session ID or the current session if no ID is provided.
+
      */
     public class LuaMedia(MediaSessionsManager sessionsManager)
     {
@@ -70,11 +70,6 @@ namespace Rotoris.LuaModules.LuaMedia
         {
             public string ContentType { set; get; }
             public byte[] ImageData { set; get; }
-        }
-        public struct MediaImageUris
-        {
-            public string? AppIconUri { set; get; }
-            public string? AlbumArtUri { set; get; }
         }
         public LuaTable get_session_ids(LuaTable luaTable)
         {
