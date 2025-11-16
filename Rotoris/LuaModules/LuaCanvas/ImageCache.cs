@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using Rotoris.LuaModules.LuaUtils;
+using SkiaSharp;
 using System.IO;
 
 namespace Rotoris.LuaModules.LuaCanvas
@@ -13,9 +14,9 @@ namespace Rotoris.LuaModules.LuaCanvas
     public class ImageCache
     {
         private readonly Dictionary<string, SKBitmap> bitmaps = [];
-        public SKBitmap load_bytes(string imageId, byte[] imageData)
+        public SKBitmap load_bytes(string imageId, Bytes imageData)
         {
-            var newBitmap = SKBitmap.Decode(imageData) ??
+            var newBitmap = SKBitmap.Decode(imageData.Data) ??
                 throw new InvalidOperationException($"Failed to decode image '{imageId}' from bytes.");
             bitmaps.Add(imageId, newBitmap);
             return newBitmap;

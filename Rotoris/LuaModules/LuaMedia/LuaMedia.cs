@@ -69,7 +69,7 @@ namespace Rotoris.LuaModules.LuaMedia
         public struct MediaImage
         {
             public string ContentType { set; get; }
-            public byte[] ImageData { set; get; }
+            public Bytes ImageData { set; get; }
         }
         public LuaTable get_session_ids(LuaTable luaTable)
         {
@@ -195,9 +195,9 @@ namespace Rotoris.LuaModules.LuaMedia
                 }
 
                 var bufferSize = (int)thumbnailStream.Length;
-                byte[] imageBuffer = new byte[bufferSize];
+                Bytes imageBuffer = new(bufferSize);
 
-                int actualBytesRead = await thumbnailStream.ReadAsync(imageBuffer);
+                int actualBytesRead = await thumbnailStream.ReadAsync(imageBuffer.Data);
 
                 if (actualBytesRead == bufferSize)
                 {
