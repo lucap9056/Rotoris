@@ -2,7 +2,7 @@
 {
     public class Bytes
     {
-        public byte[] Data { get; };
+        public byte[] Data { get; }
         public Bytes(int size)
         {
             Data = new byte[size];
