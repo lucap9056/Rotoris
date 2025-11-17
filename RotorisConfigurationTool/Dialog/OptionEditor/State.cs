@@ -77,12 +77,18 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
         }
         private void ExecuteSave()
         {
+            if (string.IsNullOrEmpty(OptionId))
+            {
+                return;
+            }
+
             MenuOptionData option = new()
             {
                 Id = OptionId,
                 IconPath = IconPath,
                 ActionId = ActionId,
             };
+
             option.ResolveIconPath();
             OptionUpdated?.Invoke(option);
         }
