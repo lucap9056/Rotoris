@@ -101,7 +101,12 @@
 
         public static string ResolveIconPathAndCache(MenuOptionData option)
         {
-            if (AppConstants.BuiltInIconPaths.TryGetValue(option.IconPath, out string? builtInIconPath))
+            if (!string.IsNullOrEmpty(option.Id) && AppConstants.BuiltInOptionsMap.TryGetValue(option.Id, out MenuOptionData builtInOption))
+            {
+                return builtInOption.IconPath;
+            }
+
+            if (!string.IsNullOrEmpty(option.IconPath) && AppConstants.BuiltInIconPaths.TryGetValue(option.IconPath, out string? builtInIconPath))
             {
                 return builtInIconPath;
             }
