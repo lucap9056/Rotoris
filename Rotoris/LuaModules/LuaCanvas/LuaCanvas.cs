@@ -87,8 +87,14 @@ return {
             });
         }
 
+        public struct DrawBlueprint
+        {
+            public LuaFunction? OnInit { get; set; }
+            public LuaFunction? OnUpdate { get; set; }
+        }
+
         /*
---- @class Rotoris.LuaCanvas.DrawContext
+--- @class Rotoris.LuaCanvas.DrawBlueprint
 --- @field OnInit fun(ctx: Rotoris.LuaCanvas.CanvasContext, args: Rotoris.LuaCanvas.CanvasContext.Args): any Initializes the drawing context. Returns an optional state object.
 --- @field OnUpdate? fun(ctx: Rotoris.LuaCanvas.CanvasContext, args: Rotoris.LuaCanvas.CanvasContext.Args, state: any) Updates the drawing context. Called repeatedly until done.
          */
