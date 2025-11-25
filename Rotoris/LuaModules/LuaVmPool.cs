@@ -7,11 +7,10 @@ namespace Rotoris.LuaModules
 {
     public class LuaVmPool : IDisposable
     {
-        public event EventHandler<LuaVmEventArgs>? LuaVmCreated;
-        public sealed class LuaVmEventArgs(Lua vm) : EventArgs
-        {
-            public Lua Vm { get; } = vm;
-        }
+        public delegate void LuaVmUpdateEventHandler(Lua vm);
+
+        public event LuaVmUpdateEventHandler? LuaVmCreated;
+        public event LuaVmUpdateEventHandler? LuaVmRemoving;
 
         private readonly SemaphoreSlim semaphore;
         private readonly ConcurrentDictionary<Lua, bool> busyVms = [];
@@ -132,9 +131,9 @@ namespace Rotoris.LuaModules
         private Lua CreateNewVm()
         {
             var newVm = new Lua();
+            LuaVmCreated?.Invoke(newVm);
             newVm.State.Encoding = Encoding.UTF8;
             currentVmCount++;
-            LuaVmCreated?.Invoke(this, new LuaVmEventArgs(newVm));
             return newVm;
         }
         private void CleanupDynamicVms(object? _)
@@ -143,12 +142,14 @@ namespace Rotoris.LuaModules
             {
                 if (DateTime.UtcNow - pair.Value > dynamicVmTimeout)
                 {
-                    if (dynamicVmIdleTimers.TryRemove(pair.Key, out var _))
+                    Lua vm = pair.Key;
+                    if (dynamicVmIdleTimers.TryRemove(vm, out var _))
                     {
                         lock (vmCountLock)
                         {
-                            busyVms.TryRemove(pair.Key, out var _);
-                            pair.Key.Dispose();
+                            busyVms.TryRemove(vm, out var _);
+                            LuaVmRemoving?.Invoke(vm);
+                            vm.Dispose();
                             currentVmCount--;
                             Log.Info($"[LuaVmPool] Disposed a timed-out dynamic Lua VM. Current VM count: {currentVmCount}");
                         }
@@ -162,10 +163,12 @@ namespace Rotoris.LuaModules
             cleanupTimer?.Dispose();
             while (idleVms.TryDequeue(out Lua? vm))
             {
-                vm?.Dispose();
+                LuaVmRemoving?.Invoke(vm);
+                vm.Dispose();
             }
             foreach (var vm in dynamicVmIdleTimers.Keys)
             {
+                LuaVmRemoving?.Invoke(vm);
                 vm.Dispose();
             }
             dynamicVmIdleTimers.Clear();
