@@ -1,6 +1,6 @@
 ﻿namespace RotorisLib.UI
 {
-    public class RelayCommand<T>(Action<T> execute, Predicate<T?>? canExecute = null) : System.Windows.Input.ICommand
+    public class RelayCommand<T>(Action<T?> execute, Predicate<T?>? canExecute = null) : System.Windows.Input.ICommand
     {
         public event EventHandler? CanExecuteChanged
         {
