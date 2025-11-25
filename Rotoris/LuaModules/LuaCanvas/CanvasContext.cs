@@ -76,42 +76,76 @@ namespace Rotoris.LuaModules.LuaCanvas
             canvas.DrawOval(x, y, rx, ry, paint);
         }
 
+        public struct RectangleRadiusOptions
+        {
+            public float Radius;
+        }
+
+        public struct RectangleRadiiOptions
+        {
+            public float RadiusX;
+            public float RadiusY;
+        }
+
         public void draw_rect(float x, float y, float width, float height, LuaTable? options = null)
         {
             if (width <= 0 || height <= 0)
             {
-                throw new ArgumentException("Rectangle dimensions must be greater than zero.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(width),
+                    $"Rectangle dimensions must be positive (width={width}, height={height})."
+                );
             }
 
             SKPaint paint = paints.get();
 
             if (options != null)
             {
-                float rx = 0f;
-                float ry = 0f;
+                float cornerRadiusX = 0f;
+                float cornerRadiusY = 0f;
 
-                if (options["RadiusX"] != null)
+                if (TryParseRectangleRadiiOptions(options, out var radiiOptions))
                 {
-                    rx = Convert.ToSingle(options["RadiusX"]);
+                    cornerRadiusX = radiiOptions.RadiusX;
+                    cornerRadiusY = radiiOptions.RadiusY;
                 }
-                if (options["RadiusY"] != null)
+                else if (TryParseRectangleRadiusOptions(options, out var singleRadiusOptions))
                 {
-                    ry = Convert.ToSingle(options["RadiusY"]);
-                }
-                else if (options["Radius"] != null)
-                {
-                    rx = Convert.ToSingle(options["Radius"]);
-                    ry = rx;
+                    cornerRadiusX = singleRadiusOptions.Radius;
+                    cornerRadiusY = singleRadiusOptions.Radius;
                 }
 
-                if (rx > 0 || ry > 0)
+                if (cornerRadiusX > 0 || cornerRadiusY > 0)
                 {
-                    canvas.DrawRoundRect(SKRect.Create(x, y, width, height), rx, ry, paint);
+                    canvas.DrawRoundRect(SKRect.Create(x, y, width, height), cornerRadiusX, cornerRadiusY, paint);
                     return;
                 }
             }
 
             canvas.DrawRect(SKRect.Create(x, y, width, height), paint);
+        }
+
+        public static bool TryParseRectangleRadiiOptions(LuaTable table, out RectangleRadiiOptions options)
+        {
+            options = new RectangleRadiiOptions();
+            if (table["RadiusX"] != null && table["RadiusY"] != null)
+            {
+                options.RadiusX = Convert.ToSingle(table["RadiusX"]);
+                options.RadiusY = Convert.ToSingle(table["RadiusY"]);
+                return true;
+            }
+            return false;
+        }
+
+        public static bool TryParseRectangleRadiusOptions(LuaTable table, out RectangleRadiusOptions options)
+        {
+            options = new RectangleRadiusOptions();
+            if (table["Radius"] != null)
+            {
+                options.Radius = Convert.ToSingle(table["Radius"]);
+                return true;
+            }
+            return false;
         }
 
         public void draw_circle(float cx, float cy, float radius)
