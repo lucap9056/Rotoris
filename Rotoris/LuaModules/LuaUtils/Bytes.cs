@@ -1,5 +1,8 @@
 ﻿namespace Rotoris.LuaModules.LuaUtils
 {
+    /*
+--- @class Bytes
+     */
     public class Bytes
     {
         public byte[] Data { get; }
