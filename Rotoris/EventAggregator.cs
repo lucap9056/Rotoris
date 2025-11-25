@@ -294,6 +294,23 @@ namespace Rotoris
          * 
          */
 
+        public sealed class ExecuteActionEventArgs(string actionId) : EventArgs
+        {
+            public string ActionId { get; init; } = actionId;
+        }
+
+        public static event EventHandler<ExecuteActionEventArgs>? ExecuteActionReceived;
+        public static void PublishExecuteAction(string actionId)
+        {
+            ExecuteActionReceived?.Invoke(null, new ExecuteActionEventArgs(actionId));
+        }
+
+        /*
+         * 
+         * 
+         * 
+         */
+
         public static event EventHandler<EventArgs>? ShowLogsReceived;
         public static void PublishShowLogs()
         {
