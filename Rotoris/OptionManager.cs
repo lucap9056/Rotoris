@@ -105,6 +105,7 @@ namespace Rotoris
             EventAggregator.NextOptionReceived += OnNextOption;
             EventAggregator.PreviousOptionReceived += OnPreviousOption;
             EventAggregator.ExecuteSelectedOptionReceived += OnExecuteSelectedOption;
+            EventAggregator.ExecuteActionReceived += OnExecuteAction;
         }
         private Configuration Load()
         {
@@ -417,6 +418,16 @@ namespace Rotoris
         {
             messageManager.Add(e.Content, e.DurationSeconds);
         }
+
+        private void OnExecuteAction(object? sender, EventAggregator.ExecuteActionEventArgs e)
+        {
+            string actionId = e.ActionId;
+            if (!string.IsNullOrEmpty(actionId) && cachedLuaModules.ContainsKey(actionId))
+            {
+                runner.Run(actionId);
+            }
+        }
+
         private static bool ReadScript(string scriptName, out string content)
         {
             try
@@ -441,6 +452,7 @@ namespace Rotoris
             content = "";
             return false;
         }
+
         private static bool ReadMenu(string menuName, out MenuOptionData[] options)
         {
             string fileName = $"_{menuName}.json";
