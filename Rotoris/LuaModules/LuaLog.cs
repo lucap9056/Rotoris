@@ -9,6 +9,7 @@ namespace Rotoris.LuaModules
      */
     public class LuaLog
     {
+        public static readonly string GlobalMame = "log";
         public void print(string text)
         {
             Log.Write(text);

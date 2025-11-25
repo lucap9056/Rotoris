@@ -15,6 +15,7 @@ namespace Rotoris.LuaModules
      */
     public class LuaFileSystem
     {
+        public static readonly string GlobalName = "fs";
         public string read_file(string path)
         {
             string fullPath = Path.GetFullPath(path);

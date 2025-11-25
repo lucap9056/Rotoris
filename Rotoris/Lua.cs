@@ -9,6 +9,7 @@ namespace Rotoris
 {
     public class LuaModuleSearcher(Dictionary<string, ActionModule> cachedModules)
     {
+        public static readonly string GlobalName = "module_searcher";
         public string? search(string name)
         {
             if (cachedModules.TryGetValue(name, out ActionModule module))
@@ -20,6 +21,7 @@ namespace Rotoris
     }
     public class LuaEnvironment(Configuration configuration)
     {
+        public static readonly string GlobalName = "env";
         public double UiSize { get; set; } = configuration.UiSize;
         public string ModuleName { get; set; } = "";
     }
@@ -31,8 +33,8 @@ namespace Rotoris
         };
         private readonly MediaSessionsManager mediaSessionsManager = new();
         private readonly LuaLog log = new();
-        private readonly LuaSystem sys = new();
         private readonly LuaHID hid = new();
+        private readonly LuaSystem sys = new();
         private readonly LuaWindows windows = new();
         private readonly LuaMenu menu = new();
         private readonly LuaFileSystem fs = new();
@@ -51,35 +53,35 @@ namespace Rotoris
 
             luaModuleSearcher = new LuaModuleSearcher(cachedModules);
 
-            pool.LuaVmCreated += (sender, e) =>
+            pool.LuaVmCreated += (vm) =>
             {
-                e.Vm["module_searcher"] = luaModuleSearcher;
-                e.Vm["log"] = log;
-                e.Vm["sys"] = sys;
-                e.Vm["hid"] = hid;
-                e.Vm["windows"] = windows;
-                e.Vm["menu"] = menu;
-                e.Vm["audio"] = audio;
-                e.Vm["cache"] = cache;
-                e.Vm["fs"] = fs;
-                e.Vm["media"] = new LuaMedia(mediaSessionsManager);
-                e.Vm["canvas"] = new LuaCanvas(400);
-                e.Vm["env"] = new LuaEnvironment(configuration);
+                vm[LuaModuleSearcher.GlobalName] = luaModuleSearcher;
+                vm[LuaEnvironment.GlobalName] = new LuaEnvironment(configuration);
+                vm[LuaFileSystem.GlobalName] = fs;
+                vm[LuaWindows.GlobalName] = windows;
+                vm[LuaSystem.GlobalName] = sys;
+                vm[LuaCanvas.GlobalName] = new LuaCanvas(400);
+                vm[LuaMedia.GlobalName] = new LuaMedia(mediaSessionsManager);
+                vm[LuaAudio.GlobalName] = audio;
+                vm[LuaCache.GlobalName] = cache;
+                vm[LuaMenu.GlobalName] = menu;
+                vm[LuaLog.GlobalMame] = log;
+                vm[LuaHID.GlobalName] = hid;
 
-                e.Vm.LoadCLRPackage();
-                e.Vm.DoString(@"
+                vm.LoadCLRPackage();
+                vm.DoString(@$"
                 local function rotoris_module_loader(modname)
-                    local module_string = module_searcher:search(modname)
+                    local module_string = {LuaModuleSearcher.GlobalName}:search(modname)
                     if module_string == nil then
                         return nil
                     end
                     return load(module_string)
                 end
 
-                package['searchers'] = { rotoris_module_loader }
+                package['searchers'] = {{ rotoris_module_loader }}
 
                 function run(script_name)
-                    local script_string = module_searcher:search(script_name)
+                    local script_string = {LuaModuleSearcher.GlobalName}:search(script_name)
                     local script_function, error_msg = load(script_string, ""@"" .. script_name)
                     if not script_function then
                         error(""Syntax error in script '"" .. script_name .. ""': "" .. error_msg)
@@ -96,6 +98,15 @@ namespace Rotoris
                 ");
             };
 
+            pool.LuaVmRemoving += (vm) =>
+            {
+                if (vm[LuaCanvas.GlobalName] is LuaCanvas canvas)
+                {
+                    canvas.Dispose();
+                }
+
+            };
+
             isInitialized = true;
         }
         public void Clear()
@@ -106,10 +117,12 @@ namespace Rotoris
             }
             pool.ForEach((vm, isDynamic) =>
             {
-                LuaCanvas? canvas = vm["canvas"] as LuaCanvas;
+                LuaCanvas? canvas = vm[LuaCache.GlobalName] as LuaCanvas;
                 canvas?.Pause();
             });
             cache.clear();
+            sys.Clear();
+            
         }
         public bool Run(string moduleName)
         {
@@ -129,7 +142,7 @@ namespace Rotoris
                 pool.UseLua((vm) =>
                 {
 
-                    if (vm["env"] is LuaEnvironment env)
+                    if (vm[LuaEnvironment.GlobalName] is LuaEnvironment env)
                     {
                         env.ModuleName = moduleName;
                     }

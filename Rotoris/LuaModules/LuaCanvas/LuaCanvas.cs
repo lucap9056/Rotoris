@@ -13,6 +13,7 @@ namespace Rotoris.LuaModules.LuaCanvas
      */
     public class LuaCanvas : IDisposable
     {
+        public static readonly string GlobalName = "canvas";
         public static readonly string Module = @"
 import 'SkiaSharp'
 

@@ -30,6 +30,7 @@ namespace Rotoris.LuaModules
      */
     public class LuaAudio : IMMNotificationClient
     {
+        public static readonly string GlobalName = "audio";
         /*
 --- @class Rotoris.LuaAudio.ProcessAudioSession
 --- @field SessionId string Unique identifier for the audio session.

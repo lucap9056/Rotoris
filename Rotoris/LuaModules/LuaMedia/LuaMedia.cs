@@ -25,6 +25,7 @@ namespace Rotoris.LuaModules.LuaMedia
      */
     public class LuaMedia(MediaSessionsManager sessionsManager)
     {
+        public static readonly string GlobalName = "media";
         /*
 --- @class Rotoris.MediaTimeline
 --- @field StartTime number The start time of the media in milliseconds.
