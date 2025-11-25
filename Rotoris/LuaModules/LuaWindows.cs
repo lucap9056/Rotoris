@@ -27,6 +27,7 @@ namespace Rotoris.LuaModules
      */
     public class LuaWindows
     {
+        public static readonly string GlobalName = "windows";
         public Result<bool> focus_window(string windowTitle)
         {
             if (string.IsNullOrWhiteSpace(windowTitle))

@@ -14,6 +14,7 @@ namespace Rotoris.LuaModules
      */
     public class LuaCache()
     {
+        public static readonly string GlobalName = "cache";
         private readonly Dictionary<string, object> cache = [];
         private readonly Lock lockObject = new();
         public void set(string key, object value)

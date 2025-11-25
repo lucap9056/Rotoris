@@ -15,6 +15,7 @@ namespace Rotoris.LuaModules
      */
     public class LuaHID
     {
+        public static readonly string GlobalName = "hid";
         public void key_down(ushort virtualKey)
         {
             User32.INPUT[] inputs = new User32.INPUT[1];

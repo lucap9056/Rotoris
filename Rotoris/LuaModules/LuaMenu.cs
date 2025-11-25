@@ -20,6 +20,7 @@ namespace Rotoris.LuaModules
      */
     public class LuaMenu
     {
+        public static readonly string GlobalName = "menu";
         public void open_menu(string name)
         {
             EventAggregator.PublishShowMenu(name);
