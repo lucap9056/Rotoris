@@ -50,12 +50,6 @@
         /// <returns><c>true</c> if the string was successfully converted; otherwise, <c>false</c>.</returns>
         public static bool TryParse(string s, out Hotkey hotkey)
         {
-            hotkey = new()
-            {
-                IsControlActive = s.Contains(HotkeyModifierSymbols.Ctrl),
-                IsShiftActive = s.Contains(HotkeyModifierSymbols.Shift),
-                IsWindowsActive = s.Contains(HotkeyModifierSymbols.Windows),
-            };
 
             string keyString = new([.. s.Where(c =>
                 c != HotkeyModifierSymbols.Ctrl &&
@@ -63,12 +57,19 @@
                 c != HotkeyModifierSymbols.Windows
                 )]);
 
-            if (int.TryParse(keyString, out int keyVkCode))
+            if (int.TryParse(keyString, out int keyVkCode) && keyVkCode != 0)
             {
-                hotkey.VirtualKeyCode = keyVkCode;
+                hotkey = new()
+                {
+                    VirtualKeyCode = keyVkCode,
+                    IsControlActive = s.Contains(HotkeyModifierSymbols.Ctrl),
+                    IsShiftActive = s.Contains(HotkeyModifierSymbols.Shift),
+                    IsWindowsActive = s.Contains(HotkeyModifierSymbols.Windows),
+                };
                 return true;
             }
 
+            hotkey = new Hotkey();
             return false;
         }
         /// <summary> Gets or sets a value indicating whether the Control modifier is active. </summary>
