@@ -22,7 +22,7 @@
         Width="410"
         >
     <Window.Resources>
-        <ui:State x:Key="State" />
+        <ui:ViewModel x:Key="ViewModel" />
         <ui:OptionIconVisualSourceConverter x:Key="OptionIconVisualSourceConverter" />
         <ui:RenderIconContextInputConverter x:Key="RenderIconContextInputConverter" />
         <ui:FocusedOptionRotationConverter x:Key="FocusedOptionRotationConverter" />
@@ -30,7 +30,7 @@
         <ui:RenderContextInputConverter x:Key="RenderContextInputConverter" />
         <ui:OptionsVisibilityConverter x:Key="OptionsVisibilityConverter" />
     </Window.Resources>
-    <Grid DataContext="{DynamicResource State}">
+    <Grid DataContext="{DynamicResource ViewModel}">
 
         <!-- Container for the radial menu elements (icons and focused segment indicator) -->
         <Grid

@@ -6,7 +6,7 @@ using RotorisLib;
 
 namespace RotorisConfigurationTool.Preview
 {
-    public class PreviewState : State
+    public class PreviewState : ViewModel
     {
         public System.Windows.Input.ICommand SelectOptionCommand { get; }
         public System.Windows.Input.ICommand EditOptionCommand { get; }

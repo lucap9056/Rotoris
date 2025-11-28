@@ -23,7 +23,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement
 
         private void AppendMenuKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if (e.Key == System.Windows.Input.Key.Enter && sender is TextBox textBox && textBox.DataContext is RadialMenuManagementState ctx)
+            if (e.Key == System.Windows.Input.Key.Enter && sender is TextBox textBox && textBox.DataContext is RadialMenuManagementViewModel ctx)
             {
                 if (ctx.AppendMenuCommand.CanExecute(textBox))
                 {

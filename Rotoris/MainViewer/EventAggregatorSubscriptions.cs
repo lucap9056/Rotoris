@@ -56,13 +56,13 @@ namespace Rotoris.MainViewer
 
         private new void Hide()
         {
-            State.MenuOptions = [];
+            viewModel.MenuOptions = [];
             Visibility = Visibility.Hidden;
             Status.UpdateMenuVisibledState(false);
         }
         private void OnUILoadConfigurationRequested(object? sender, EventAggregator.UILoadConfigurationReceiveEventArgs e)
         {
-            State.Size = e.Configuration.UiSize;
+            viewModel.Size = e.Configuration.UiSize;
 
             var configuration = e.Configuration;
             var brushes = new UserInterface.AppThemeBrushes();
@@ -81,28 +81,28 @@ namespace Rotoris.MainViewer
                     brushes.AccentBrush = UserInterface.AppThemeBrushes.BrushFromColor(accent);
                 }
 
-                State.ThemeBrushes = brushes;
+                viewModel.ThemeBrushes = brushes;
             }
         }
         public void OnSetSizeRequested(object? sender, EventAggregator.UISetSizeReceiveEventArgs e)
         {
-            State.Size = e.Size;
+            viewModel.Size = e.Size;
         }
         public void OnDisplayMessageRequested(object? sender, EventAggregator.UIDisplayMessageReceiveEventArgs e)
         {
-            State.MessageContent = e.Content ?? "";
+            viewModel.MessageContent = e.Content ?? "";
         }
 
         public void OnDrawOptionsRequested(object? sender, EventAggregator.UIDrawOptionsReceiveEventArgs e)
         {
-            State.MenuOptions = e.Options;
-            State.OptionSector = new RotorisLib.UI.State.OptionSectorData(Width, Height, e.Options.Length, State.Padding);
-            State.FocusedMenuOptionIndex = 0;
+            viewModel.MenuOptions = e.Options;
+            viewModel.OptionSector = new RotorisLib.UI.ViewModel.OptionSectorData(Width, Height, e.Options.Length, viewModel.Padding);
+            viewModel.FocusedMenuOptionIndex = 0;
         }
 
         public void OnFocusOptionRequested(object? sender, EventAggregator.UIFocusOptionReceiveEventArgs e)
         {
-            State.FocusedMenuOptionIndex = e.Index;
+            viewModel.FocusedMenuOptionIndex = e.Index;
         }
 
         /*
@@ -115,26 +115,26 @@ namespace Rotoris.MainViewer
         {
             lock (messageCanvasLock)
             {
-                if (State.MessageCanvasBitmap == null || State.MessageCanvasBitmap.PixelWidth != e.Width || State.MessageCanvasBitmap.PixelHeight != e.Height)
+                if (viewModel.MessageCanvasBitmap == null || viewModel.MessageCanvasBitmap.PixelWidth != e.Width || viewModel.MessageCanvasBitmap.PixelHeight != e.Height)
                 {
-                    State.MessageCanvasBitmap = new WriteableBitmap(e.Width, e.Height, 96, 96, PixelFormats.Pbgra32, null);
+                    viewModel.MessageCanvasBitmap = new WriteableBitmap(e.Width, e.Height, 96, 96, PixelFormats.Pbgra32, null);
                 }
 
-                State.MessageCanvasBitmap.Lock();
+                viewModel.MessageCanvasBitmap.Lock();
 
-                Marshal.Copy(e.Data, 0, State.MessageCanvasBitmap.BackBuffer, e.Data.Length);
+                Marshal.Copy(e.Data, 0, viewModel.MessageCanvasBitmap.BackBuffer, e.Data.Length);
 
-                State.MessageCanvasBitmap.AddDirtyRect(new Int32Rect(0, 0, e.Width, e.Height));
+                viewModel.MessageCanvasBitmap.AddDirtyRect(new Int32Rect(0, 0, e.Width, e.Height));
 
-                State.MessageCanvasBitmap.Unlock();
+                viewModel.MessageCanvasBitmap.Unlock();
             }
         }
 
         private void ClearMessageCanvas()
         {
-            if (State.MessageCanvasBitmap != null)
+            if (viewModel.MessageCanvasBitmap != null)
             {
-                var bitmap = State.MessageCanvasBitmap;
+                var bitmap = viewModel.MessageCanvasBitmap;
                 int size = bitmap.PixelWidth * bitmap.PixelHeight * 4;
 
                 byte[] emptyData = new byte[size];

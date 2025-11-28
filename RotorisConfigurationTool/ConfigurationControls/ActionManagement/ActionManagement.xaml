@@ -10,12 +10,12 @@
              d:DataContext="{d:DesignInstance c:MainContext}"
              >
     <UserControl.Resources>
-        <local:ActionManagementStateConverter x:Key="ActionManagementStateConverter" />
-        <local:ActionItemStateConverter x:Key="ActionItemStateConverter" />
+        <local:ActionManagementViewModelConverter x:Key="ActionManagementViewModelConverter" />
+        <local:ActionItemViewModelConverter x:Key="ActionItemViewModelConverter" />
     </UserControl.Resources>
     <Grid Margin="15,0,0,0" MinWidth="240" MaxHeight="240"
-          DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource ActionManagementStateConverter}}"
-          d:DataContext="{d:DesignInstance local:ActionManagementState}"
+          DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource ActionManagementViewModelConverter}}"
+          d:DataContext="{d:DesignInstance local:ActionManagementViewModel}"
           >
         <GroupBox
             Header="{x:Static i18n:I18n.Actions}"
@@ -44,9 +44,9 @@
                     <ListView.ItemTemplate>
                         <DataTemplate>
 
-                            <Grid MinWidth="100" MinHeight="28" d:DataContext="{d:DesignInstance local:ActionItemState}">
+                            <Grid MinWidth="100" MinHeight="28" d:DataContext="{d:DesignInstance local:ActionItemViewModel}">
                                 <Grid.DataContext>
-                                    <MultiBinding Converter="{StaticResource ActionItemStateConverter}">
+                                    <MultiBinding Converter="{StaticResource ActionItemViewModelConverter}">
                                         <Binding RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
                                         <Binding Path="." />
                                         <Binding RelativeSource="{RelativeSource AncestorType={x:Type Grid},AncestorLevel=2}" Path="DataContext.RemoveActionCommand" />

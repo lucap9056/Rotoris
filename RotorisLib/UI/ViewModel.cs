@@ -1,33 +1,27 @@
-﻿using RotorisLib;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-
-namespace Rotoris.MainViewer
+﻿namespace RotorisLib.UI
 {
-    public class MainViewerState : DependencyObject
+    public class ViewModel : System.Windows.DependencyObject
     {
-
-        public static readonly DependencyProperty AccentBrushProperty =
-            DependencyProperty.Register(
+        public static readonly System.Windows.DependencyProperty AccentBrushProperty =
+            System.Windows.DependencyProperty.Register(
                 nameof(AccentBrush),
-                typeof(SolidColorBrush),
-                typeof(MainViewerState),
-                new PropertyMetadata(new UserInterface.AppThemeBrushes().AccentBrush)
+                typeof(System.Windows.Media.SolidColorBrush),
+                typeof(ViewModel),
+                new System.Windows.PropertyMetadata(new UserInterface.AppThemeBrushes().AccentBrush)
                 );
 
-        public SolidColorBrush AccentBrush
+        public System.Windows.Media.SolidColorBrush AccentBrush
         {
-            get => (SolidColorBrush)GetValue(AccentBrushProperty);
+            get => (System.Windows.Media.SolidColorBrush)GetValue(AccentBrushProperty);
             set => SetValue(AccentBrushProperty, value);
         }
 
-        public static readonly DependencyProperty ThemeBrushesProperty =
-            DependencyProperty.Register(
+        public static readonly System.Windows.DependencyProperty ThemeBrushesProperty =
+            System.Windows.DependencyProperty.Register(
                 nameof(ThemeBrushes),
                 typeof(UserInterface.AppThemeBrushes),
-                typeof(MainViewerState),
-                new PropertyMetadata(new UserInterface.AppThemeBrushes())
+                typeof(ViewModel),
+                new System.Windows.PropertyMetadata(new UserInterface.AppThemeBrushes())
                 );
 
         public UserInterface.AppThemeBrushes ThemeBrushes
@@ -46,60 +40,60 @@ namespace Rotoris.MainViewer
          * 
          */
 
-        public static readonly DependencyProperty PaddingProperty =
-            DependencyProperty.Register(
+        public static readonly System.Windows.DependencyProperty PaddingProperty =
+            System.Windows.DependencyProperty.Register(
                 nameof(Padding),
                 typeof(int),
-                typeof(MainViewerState),
-                new PropertyMetadata(10));
+                typeof(ViewModel),
+                new System.Windows.PropertyMetadata(10));
         public int Padding
         {
             get => (int)GetValue(PaddingProperty);
             set => SetValue(PaddingProperty, value);
         }
 
-        public static readonly DependencyProperty CenterPointProperty =
-            DependencyProperty.Register(
+        public static readonly System.Windows.DependencyProperty CenterPointProperty =
+            System.Windows.DependencyProperty.Register(
                 nameof(CenterPoint),
-                typeof(Point),
-                typeof(MainViewerState),
-                new PropertyMetadata(new Point(200, 200)));
+                typeof(System.Windows.Point),
+                typeof(ViewModel),
+                new System.Windows.PropertyMetadata(new System.Windows.Point(200, 200)));
         public string CenterPoint
         {
             get => (string)GetValue(CenterPointProperty);
             set => SetValue(CenterPointProperty, value);
         }
 
-        public static readonly DependencyProperty OutsideRadiusProperty =
-            DependencyProperty.Register(
+        public static readonly System.Windows.DependencyProperty OutsideRadiusProperty =
+            System.Windows.DependencyProperty.Register(
                 nameof(OutsideRadius),
                 typeof(double),
-                typeof(MainViewerState),
-                new PropertyMetadata((double)200));
+                typeof(ViewModel),
+                new System.Windows.PropertyMetadata((double)200));
         public double OutsideRadius
         {
             get => (double)GetValue(OutsideRadiusProperty);
             set => SetValue(OutsideRadiusProperty, value);
         }
 
-        public static readonly DependencyProperty InsideRadiusProperty =
-            DependencyProperty.Register(
+        public static readonly System.Windows.DependencyProperty InsideRadiusProperty =
+            System.Windows.DependencyProperty.Register(
                 nameof(InsideRadius),
                 typeof(double),
-                typeof(MainViewerState),
-                new PropertyMetadata((double)100));
+                typeof(ViewModel),
+                new System.Windows.PropertyMetadata((double)100));
         public double InsideRadius
         {
             get => (double)GetValue(InsideRadiusProperty);
             set => SetValue(InsideRadiusProperty, value);
         }
 
-        public static readonly DependencyProperty CenterRadiusProperty =
-            DependencyProperty.Register(
+        public static readonly System.Windows.DependencyProperty CenterRadiusProperty =
+            System.Windows.DependencyProperty.Register(
                 nameof(CenterRadius),
                 typeof(double),
-                typeof(MainViewerState),
-                new PropertyMetadata((double)95));
+                typeof(ViewModel),
+                new System.Windows.PropertyMetadata((double)95));
         public double CenterRadius
         {
             get => (double)GetValue(CenterRadiusProperty);
@@ -112,9 +106,9 @@ namespace Rotoris.MainViewer
          * 
          */
 
-        private static void OnSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnSizeChanged(System.Windows.DependencyObject d, System.Windows.DependencyPropertyChangedEventArgs e)
         {
-            if (d is MainViewerState viewerState)
+            if (d is ViewModel viewerState)
             {
                 double oldValue = (double)e.OldValue;
                 double newValue = (double)e.NewValue;
@@ -126,7 +120,7 @@ namespace Rotoris.MainViewer
                 double halfSize = newValue / 2;
                 int padding = (int)d.GetValue(PaddingProperty);
 
-                d.SetValue(CenterPointProperty, new Point(halfSize + padding / 2, halfSize + padding / 2));
+                d.SetValue(CenterPointProperty, new System.Windows.Point(halfSize + padding / 2, halfSize + padding / 2));
                 d.SetValue(OutsideRadiusProperty, halfSize);
                 d.SetValue(InsideRadiusProperty, newValue / 4.0);
                 d.SetValue(CenterRadiusProperty, newValue * 0.475 / 2.0);
@@ -149,12 +143,12 @@ namespace Rotoris.MainViewer
             SizeChanged?.Invoke(this, oldValue, newValue);
         }
 
-        public static readonly DependencyProperty SizeProperty =
-            DependencyProperty.Register(
+        public static readonly System.Windows.DependencyProperty SizeProperty =
+            System.Windows.DependencyProperty.Register(
                 nameof(Size),
                 typeof(double),
-                typeof(MainViewerState),
-                new PropertyMetadata((double)400, OnSizeChanged));
+                typeof(ViewModel),
+                new System.Windows.PropertyMetadata(0.0, OnSizeChanged));
         public double Size
         {
             get => (double)GetValue(SizeProperty);
@@ -163,16 +157,16 @@ namespace Rotoris.MainViewer
 
         public struct OptionSectorData
         {
-            public Size OuterRadiusSize { get; set; }
-            public Size InnerRadiusSize { get; set; }
-            public Point OuterStartPoint { get; set; }
-            public Point OuterEndPoint { get; set; }
-            public Point InnerStartPoint { get; set; }
-            public Point InnerEndPoint { get; set; }
+            public System.Windows.Size OuterRadiusSize { get; set; }
+            public System.Windows.Size InnerRadiusSize { get; set; }
+            public System.Windows.Point OuterStartPoint { get; set; }
+            public System.Windows.Point OuterEndPoint { get; set; }
+            public System.Windows.Point InnerStartPoint { get; set; }
+            public System.Windows.Point InnerEndPoint { get; set; }
             public bool IsLargeArc { get; set; }
             public OptionSectorData(double width, double height, int optionCount, int padding)
             {
-                Point centerPoint = new(width / 2, height / 2);
+                System.Windows.Point centerPoint = new(width / 2, height / 2);
                 double anglePerOption = 360.0 / optionCount;
                 double halfAngle = anglePerOption / 2.0;
 
@@ -201,19 +195,19 @@ namespace Rotoris.MainViewer
                         centerPoint.X + innerRadiusX * Math.Cos(startAngleRad),
                         centerPoint.Y + innerRadiusY * Math.Sin(startAngleRad));
 
-                    OuterRadiusSize = new Size(outerRadiusX, outerRadiusY);
-                    InnerRadiusSize = new Size(innerRadiusX, innerRadiusY);
+                    OuterRadiusSize = new System.Windows.Size(outerRadiusX, outerRadiusY);
+                    InnerRadiusSize = new System.Windows.Size(innerRadiusX, innerRadiusY);
                     IsLargeArc = anglePerOption > 180;
                 }
             }
         }
 
-        public static readonly DependencyProperty OptionSectorProperty =
-            DependencyProperty.Register(
+        public static readonly System.Windows.DependencyProperty OptionSectorProperty =
+            System.Windows.DependencyProperty.Register(
                 nameof(OptionSector),
                 typeof(OptionSectorData),
-                typeof(MainViewerState),
-                new PropertyMetadata(new OptionSectorData { }));
+                typeof(ViewModel),
+                new System.Windows.PropertyMetadata(new OptionSectorData { }));
         public OptionSectorData OptionSector
         {
             get => (OptionSectorData)GetValue(OptionSectorProperty);
@@ -226,12 +220,12 @@ namespace Rotoris.MainViewer
          * 
          */
 
-        public static readonly DependencyProperty FocusedMenuOptionIndexProperty =
-            DependencyProperty.Register(
+        public static readonly System.Windows.DependencyProperty FocusedMenuOptionIndexProperty =
+            System.Windows.DependencyProperty.Register(
                 nameof(FocusedMenuOptionIndex),
                 typeof(int),
-                typeof(MainViewerState),
-                new PropertyMetadata(0)
+                typeof(ViewModel),
+                new System.Windows.PropertyMetadata(0)
                 );
 
         public int FocusedMenuOptionIndex
@@ -240,12 +234,12 @@ namespace Rotoris.MainViewer
             set => SetValue(FocusedMenuOptionIndexProperty, value);
         }
 
-        public static readonly DependencyProperty MenuOptionsProperty =
-            DependencyProperty.Register(
+        public static readonly System.Windows.DependencyProperty MenuOptionsProperty =
+            System.Windows.DependencyProperty.Register(
                 nameof(MenuOptions),
                 typeof(MenuOptionData[]),
-                typeof(MainViewerState),
-                new PropertyMetadata(Array.Empty<MenuOptionData>())
+                typeof(ViewModel),
+                new System.Windows.PropertyMetadata(Array.Empty<MenuOptionData>())
                 );
 
         public MenuOptionData[] MenuOptions
@@ -260,12 +254,12 @@ namespace Rotoris.MainViewer
          * 
          */
 
-        public static readonly DependencyProperty MessageContentProperty =
-            DependencyProperty.Register(
+        public static readonly System.Windows.DependencyProperty MessageContentProperty =
+            System.Windows.DependencyProperty.Register(
                 nameof(MessageContent),
                 typeof(string),
-                typeof(MainViewerState),
-                new PropertyMetadata(""));
+                typeof(ViewModel),
+                new System.Windows.PropertyMetadata(""));
         public string MessageContent
         {
             get => (string)GetValue(MessageContentProperty);
@@ -278,34 +272,23 @@ namespace Rotoris.MainViewer
          * 
          */
 
-        public static readonly DependencyProperty MessageCanvasBitmapProperty =
-            DependencyProperty.Register(
+        public static readonly System.Windows.DependencyProperty MessageCanvasBitmapProperty =
+            System.Windows.DependencyProperty.Register(
                 nameof(MessageCanvasBitmap),
-                typeof(WriteableBitmap),
-                typeof(MainViewerState),
-                new PropertyMetadata(null));
-        public WriteableBitmap MessageCanvasBitmap
+                typeof(System.Windows.Media.Imaging.WriteableBitmap),
+                typeof(ViewModel),
+                new System.Windows.PropertyMetadata(null));
+        public System.Windows.Media.Imaging.WriteableBitmap MessageCanvasBitmap
         {
-            get => (WriteableBitmap)GetValue(MessageCanvasBitmapProperty);
+            get => (System.Windows.Media.Imaging.WriteableBitmap)GetValue(MessageCanvasBitmapProperty);
             set => SetValue(MessageCanvasBitmapProperty, value);
         }
-    }
 
-    public class NotNullToVisibilityConverter : System.Windows.Data.IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value == null)
-            {
-                return Visibility.Collapsed;
-            }
+        /*
+         * 
+         * 
+         * 
+         */
 
-            return Visibility.Visible;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return DependencyProperty.UnsetValue;
-        }
     }
 }

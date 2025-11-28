@@ -1,14 +1,14 @@
 ﻿namespace RotorisConfigurationTool.Dialog.ColorPicker
 {
     public delegate void ColorSelectEventHandler(System.Windows.Media.Color color);
-    internal class ColorPickerState : System.Windows.DependencyObject
+    internal class ColorPickerViewModel : System.Windows.DependencyObject
     {
 
         public static readonly System.Windows.DependencyProperty HueProperty =
             System.Windows.DependencyProperty.Register(
                 nameof(Hue),
                 typeof(double),
-                typeof(ColorPickerState),
+                typeof(ColorPickerViewModel),
                 new System.Windows.PropertyMetadata(0.0, ColorComponentChanged)
                 );
 
@@ -24,7 +24,7 @@
             System.Windows.DependencyProperty.Register(
                 nameof(Saturation),
                 typeof(double),
-                typeof(ColorPickerState),
+                typeof(ColorPickerViewModel),
                 new System.Windows.PropertyMetadata(0.5, ColorComponentChanged)
                 );
 
@@ -40,7 +40,7 @@
             System.Windows.DependencyProperty.Register(
                 nameof(Value),
                 typeof(double),
-                typeof(ColorPickerState),
+                typeof(ColorPickerViewModel),
                 new System.Windows.PropertyMetadata(0.5, ColorComponentChanged)
                 );
 
@@ -56,7 +56,7 @@
             System.Windows.DependencyProperty.Register(
                 nameof(Alpha),
                 typeof(byte),
-                typeof(ColorPickerState),
+                typeof(ColorPickerViewModel),
                 new System.Windows.PropertyMetadata((byte)255, ColorComponentChanged)
                 );
 
@@ -69,7 +69,7 @@
         public event ColorSelectEventHandler? ColorSelected;
         private static void ColorComponentChanged(System.Windows.DependencyObject d, System.Windows.DependencyPropertyChangedEventArgs e)
         {
-            if (d is ColorPickerState state)
+            if (d is ColorPickerViewModel state)
             {
                 var finalSelectedColor = Hvs.ToColor(state.Hue, state.Saturation, state.Value, state.Alpha);
                 state.ColorSelected?.Invoke(finalSelectedColor);

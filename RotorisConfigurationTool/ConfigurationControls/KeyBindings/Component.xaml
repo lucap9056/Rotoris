@@ -10,16 +10,16 @@
              d:DataContext="{d:DesignInstance c:MainContext}"
              >
     <UserControl.Resources>
-        <local:KeyBindingsStateConverter x:Key="KeyBindingsStateConverter" />
+        <local:KeyBindingsViewModelConverter x:Key="KeyBindingsViewModelConverter" />
         <local:HotkeyTextConverter x:Key="HotkeyTextConverter" />
         <local:TrunoffKeyboardCapture x:Key="TrunoffKeyboardCapture" />
         <local:EditingKeyBorderBrushConverter x:Key="EditingKeyBorderBrushConverter" />
     </UserControl.Resources>
     <Grid Margin="15" Width="250"
-          d:DataContext="{d:DesignInstance local:KeyBindingsState}"
+          d:DataContext="{d:DesignInstance local:KeyBindingsViewModel}"
         >
         <Grid.DataContext>
-            <MultiBinding Converter="{StaticResource KeyBindingsStateConverter}">
+            <MultiBinding Converter="{StaticResource KeyBindingsViewModelConverter}">
                 <Binding RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" Path="DataContext" />
                 <Binding RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" Path="IsTabSelected" />
             </MultiBinding>

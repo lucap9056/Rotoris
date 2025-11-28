@@ -7,13 +7,13 @@ using RotorisLib.UI;
 
 namespace RotorisConfigurationTool.ConfigurationControls.ActionManagement
 {
-    internal class ActionManagementState : DependencyObject
+    internal class ActionManagementViewModel : DependencyObject
     {
         public ICommand AppendActionCommand { get; }
         public ICommand RemoveActionCommand { get; }
 
         private readonly SettingsManager settings;
-        public ActionManagementState(SettingsManager s)
+        public ActionManagementViewModel(SettingsManager s)
         {
             settings = s;
             AppendActionCommand = new RelayCommand(ExecuteAppendAction);
@@ -28,7 +28,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.ActionManagement
             DependencyProperty.Register(
                 nameof(ActionList),
                 typeof(IEnumerable<string>),
-                typeof(ActionManagementState),
+                typeof(ActionManagementViewModel),
                 new PropertyMetadata((IEnumerable<string>)[])
                 );
 
@@ -42,7 +42,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.ActionManagement
             DependencyProperty.Register(
                 nameof(AppendInputValue),
                 typeof(string),
-                typeof(ActionManagementState),
+                typeof(ActionManagementViewModel),
                 new PropertyMetadata("")
                 );
 
@@ -90,13 +90,13 @@ namespace RotorisConfigurationTool.ConfigurationControls.ActionManagement
 
     }
 
-    public class ActionManagementStateConverter : System.Windows.Data.IValueConverter
+    public class ActionManagementViewModelConverter : System.Windows.Data.IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (value is Component component && component.DataContext is MainContext ctx)
             {
-                return new ActionManagementState(ctx.Settings);
+                return new ActionManagementViewModel(ctx.Settings);
             }
 
             return DependencyProperty.UnsetValue;

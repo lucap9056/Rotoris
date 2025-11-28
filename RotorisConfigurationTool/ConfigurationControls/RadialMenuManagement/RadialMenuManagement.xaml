@@ -11,12 +11,12 @@
              d:DataContext="{d:DesignInstance c:MainContext}"
              >
     <UserControl.Resources>
-        <local:RadialMenuManagementStateConverter x:Key="RadialMenuManagementStateConverter" />
-        <local:RadialMenuItemStateConverter x:Key="RadialMenuItemStateConverter" />
+        <local:RadialMenuManagementViewModelConverter x:Key="RadialMenuManagementViewModelConverter" />
+        <local:RadialMenuItemViewModelConverter x:Key="RadialMenuItemViewModelConverter" />
     </UserControl.Resources>
     <Grid Margin="15" MinWidth="240"
-          DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource RadialMenuManagementStateConverter}}"
-          d:DataContext="{d:DesignInstance local:RadialMenuManagementState}"
+          DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource RadialMenuManagementViewModelConverter}}"
+          d:DataContext="{d:DesignInstance local:RadialMenuManagementViewModel}"
           >
 
         <Grid.RowDefinitions>
@@ -77,9 +77,9 @@
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid MinWidth="100" MinHeight="28" d:DataContext="{d:DesignInstance local:RadialMenuItemState}">
+                            <Grid MinWidth="100" MinHeight="28" d:DataContext="{d:DesignInstance local:RadialMenuItemViewModel}">
                                 <Grid.DataContext>
-                                    <MultiBinding Converter="{StaticResource RadialMenuItemStateConverter}">
+                                    <MultiBinding Converter="{StaticResource RadialMenuItemViewModelConverter}">
                                         <Binding RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
                                         <Binding Path="." />
                                         <Binding RelativeSource="{RelativeSource AncestorType={x:Type Grid},AncestorLevel=2}" Path="DataContext.RemoveMenuCommand" />

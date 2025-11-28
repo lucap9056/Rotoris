@@ -18,7 +18,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
     }
 
     public delegate void OptionUpdateEventHandler(MenuOptionData option);
-    internal class OptionEditorState : System.Windows.DependencyObject
+    internal class OptionEditorViewModel : System.Windows.DependencyObject
     {
         public event OptionUpdateEventHandler? OptionUpdated;
         public System.Windows.Input.ICommand IconPathBrowseCommand { get; }
@@ -27,7 +27,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
         public System.Windows.Input.ICommand SetActionIdCommand { get; }
         public System.Windows.Input.ICommand RemoveCommand { get; }
         public System.Windows.Input.ICommand SaveCommand { get; }
-        public OptionEditorState()
+        public OptionEditorViewModel()
         {
             IconPathBrowseCommand = new RelayCommand(ExecuteIconPathBrowse);
             SetOptionIdCommand = new RelayCommand(ExecuteSetOptionId);
@@ -97,7 +97,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
             System.Windows.DependencyProperty.Register(
                 nameof(Loaded),
                 typeof(bool),
-                typeof(OptionEditorState),
+                typeof(OptionEditorViewModel),
                 new System.Windows.PropertyMetadata(false)
                 );
 
@@ -111,7 +111,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
             System.Windows.DependencyProperty.Register(
                 nameof(OptionId),
                 typeof(string),
-                typeof(OptionEditorState),
+                typeof(OptionEditorViewModel),
                 new System.Windows.PropertyMetadata("")
                 );
 
@@ -125,7 +125,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
             System.Windows.DependencyProperty.Register(
                 nameof(IconPath),
                 typeof(string),
-                typeof(OptionEditorState),
+                typeof(OptionEditorViewModel),
                 new System.Windows.PropertyMetadata("")
                 );
 
@@ -139,7 +139,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
             System.Windows.DependencyProperty.Register(
                 nameof(ActionId),
                 typeof(string),
-                typeof(OptionEditorState),
+                typeof(OptionEditorViewModel),
                 new System.Windows.PropertyMetadata("")
                 );
 
@@ -154,7 +154,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
             System.Windows.DependencyProperty.Register(
                 nameof(CurrentSelectionView),
                 typeof(OptionSelectionViewType),
-                typeof(OptionEditorState),
+                typeof(OptionEditorViewModel),
                 new System.Windows.PropertyMetadata(OptionSelectionViewType.OptionId, OnCurrentSelectionViewChanged)
                 );
 
@@ -166,7 +166,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
 
         private static void OnCurrentSelectionViewChanged(System.Windows.DependencyObject d, System.Windows.DependencyPropertyChangedEventArgs e)
         {
-            if (d is OptionEditorState state && e.NewValue is OptionSelectionViewType t)
+            if (d is OptionEditorViewModel state && e.NewValue is OptionSelectionViewType t)
             {
                 switch (t)
                 {
@@ -190,7 +190,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
             System.Windows.DependencyProperty.Register(
                 nameof(SelectionViewLabelKey),
                 typeof(string),
-                typeof(OptionEditorState),
+                typeof(OptionEditorViewModel),
                 new System.Windows.PropertyMetadata("ListLabel-Options")
                 );
 
@@ -204,7 +204,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
             System.Windows.DependencyProperty.Register(
                 nameof(SelectionViewDescriptionKey),
                 typeof(string),
-                typeof(OptionEditorState),
+                typeof(OptionEditorViewModel),
                 new System.Windows.PropertyMetadata("ListDescription-Options")
                 );
 
@@ -218,7 +218,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
             System.Windows.DependencyProperty.Register(
                 nameof(BuiltInOptions),
                 typeof(string[]),
-                typeof(OptionEditorState),
+                typeof(OptionEditorViewModel),
                 new System.Windows.PropertyMetadata((string[])[.. AppConstants.BuiltInOptionsMap.Keys])
                 );
 
@@ -232,7 +232,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
             System.Windows.DependencyProperty.Register(
                 nameof(BuiltInIconPaths),
                 typeof(Dictionary<string, string>),
-                typeof(OptionEditorState),
+                typeof(OptionEditorViewModel),
                 new System.Windows.PropertyMetadata(AppConstants.BuiltInIconPaths)
                 );
 
@@ -246,7 +246,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
             System.Windows.DependencyProperty.Register(
                 nameof(RadialMenuNames),
                 typeof(string[]),
-                typeof(OptionEditorState),
+                typeof(OptionEditorViewModel),
                 new System.Windows.PropertyMetadata(Array.Empty<string>())
                 );
 
@@ -260,7 +260,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
             System.Windows.DependencyProperty.Register(
                 nameof(ExternalActionNames),
                 typeof(string[]),
-                typeof(OptionEditorState),
+                typeof(OptionEditorViewModel),
                 new System.Windows.PropertyMetadata(Array.Empty<string>(), OnExternalActionNamesChanged)
                 );
 
@@ -275,7 +275,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
             System.Windows.DependencyProperty.Register(
                 nameof(ExternalActionTree),
                 typeof(System.Collections.ObjectModel.ObservableCollection<TreeItem>),
-                typeof(OptionEditorState),
+                typeof(OptionEditorViewModel),
                 new System.Windows.PropertyMetadata((System.Collections.ObjectModel.ObservableCollection<TreeItem>)[])
                 );
 
@@ -288,7 +288,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
         private static void OnExternalActionNamesChanged(System.Windows.DependencyObject d, System.Windows.DependencyPropertyChangedEventArgs e)
         {
 
-            if (d is OptionEditorState state && e.NewValue is string[] externalActionNames)
+            if (d is OptionEditorViewModel state && e.NewValue is string[] externalActionNames)
             {
 
                 TreeItem builtInActionItems = new(

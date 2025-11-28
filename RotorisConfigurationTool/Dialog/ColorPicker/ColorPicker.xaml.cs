@@ -12,18 +12,18 @@ namespace RotorisConfigurationTool.Dialog.ColorPicker
     public partial class PopupWindow : Window
     {
         public event ColorSelectEventHandler? ColorSelected;
-        private readonly ColorPickerState State = new();
+        private readonly ColorPickerViewModel viewModel = new();
         public PopupWindow(Color initialColor)
         {
             InitializeComponent();
-            Resources["State"] = State;
+            Resources["ViewModel"] = viewModel;
 
             var (H, S, V) = Hvs.FromColor(initialColor);
-            State.Hue = H;
-            State.Saturation = S;
-            State.Value = V;
+            viewModel.Hue = H;
+            viewModel.Saturation = S;
+            viewModel.Value = V;
 
-            State.ColorSelected += (color) =>
+            viewModel.ColorSelected += (color) =>
             {
                 ColorSelected?.Invoke(color);
             };
@@ -52,8 +52,8 @@ namespace RotorisConfigurationTool.Dialog.ColorPicker
             double x = Math.Max(0, Math.Min(width, p.X));
             double y = Math.Max(0, Math.Min(height, p.Y));
 
-            State.Saturation = x / width;
-            State.Value = 1.0 - (y / height);
+            viewModel.Saturation = x / width;
+            viewModel.Value = 1.0 - (y / height);
         }
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)

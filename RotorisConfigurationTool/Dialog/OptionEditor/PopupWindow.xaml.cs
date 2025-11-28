@@ -15,7 +15,7 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
         public PopupWindow(SettingsManager settings, MenuOptionData option)
         {
             InitializeComponent();
-            OptionEditorState state = new()
+            OptionEditorViewModel viewModel = new()
             {
                 OptionId = option.Id,
                 IconPath = option.IconPath,
@@ -25,9 +25,9 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
                 Loaded = true,
             };
 
-            Resources["State"] = state;
+            Resources["ViewModel"] = viewModel;
 
-            state.OptionUpdated += (updatedOption) =>
+            viewModel.OptionUpdated += (updatedOption) =>
             {
                 OptionUpdated?.Invoke(updatedOption);
                 DialogResult = true;
@@ -37,35 +37,35 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
 
         private void OptionId_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (sender is TextBox textBox && textBox.DataContext is OptionEditorState state)
+            if (sender is TextBox textBox && textBox.DataContext is OptionEditorViewModel viewModel)
             {
-                state.CurrentSelectionView = OptionSelectionViewType.OptionId;
+                viewModel.CurrentSelectionView = OptionSelectionViewType.OptionId;
             }
         }
 
         private void IconPath_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (sender is TextBox textBox && textBox.DataContext is OptionEditorState state)
+            if (sender is TextBox textBox && textBox.DataContext is OptionEditorViewModel viewModel)
             {
-                state.CurrentSelectionView = OptionSelectionViewType.IconPath;
+                viewModel.CurrentSelectionView = OptionSelectionViewType.IconPath;
             }
         }
 
         private void ActionId_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (sender is TextBox textBox && textBox.DataContext is OptionEditorState state)
+            if (sender is TextBox textBox && textBox.DataContext is OptionEditorViewModel viewModel)
             {
-                state.CurrentSelectionView = OptionSelectionViewType.ActionId;
+                viewModel.CurrentSelectionView = OptionSelectionViewType.ActionId;
             }
         }
 
         private void OptionId_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is ListBox listBox && listBox.DataContext is OptionEditorState state)
+            if (sender is ListBox listBox && listBox.DataContext is OptionEditorViewModel viewModel)
             {
-                if (state.SetOptionIdCommand.CanExecute(listBox.SelectedItem))
+                if (viewModel.SetOptionIdCommand.CanExecute(listBox.SelectedItem))
                 {
-                    state.SetOptionIdCommand.Execute(listBox.SelectedItem);
+                    viewModel.SetOptionIdCommand.Execute(listBox.SelectedItem);
                 }
                 listBox.SelectedItem = null;
             }
@@ -73,11 +73,11 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
 
         private void IconPath_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is ListBox listBox && listBox.DataContext is OptionEditorState state)
+            if (sender is ListBox listBox && listBox.DataContext is OptionEditorViewModel viewModel)
             {
-                if (state.SetIconPathCommand.CanExecute(listBox.SelectedItem))
+                if (viewModel.SetIconPathCommand.CanExecute(listBox.SelectedItem))
                 {
-                    state.SetIconPathCommand.Execute(listBox.SelectedItem);
+                    viewModel.SetIconPathCommand.Execute(listBox.SelectedItem);
                 }
                 listBox.SelectedItem = null;
             }
@@ -85,11 +85,11 @@ namespace RotorisConfigurationTool.Dialog.OptionEditor
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (sender is TreeView treeView && treeView.DataContext is OptionEditorState state)
+            if (sender is TreeView treeView && treeView.DataContext is OptionEditorViewModel viewModel)
             {
-                if (state.SetActionIdCommand.CanExecute(treeView.SelectedItem))
+                if (viewModel.SetActionIdCommand.CanExecute(treeView.SelectedItem))
                 {
-                    state.SetActionIdCommand.Execute(treeView.SelectedItem);
+                    viewModel.SetActionIdCommand.Execute(treeView.SelectedItem);
                 }
             }
         }

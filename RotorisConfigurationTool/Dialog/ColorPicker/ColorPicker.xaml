@@ -17,7 +17,7 @@
         Width="400"
         >
     <Window.Resources>
-        <local:ColorPickerState x:Key="State" />
+        <local:ColorPickerViewModel x:Key="ViewModel" />
         <local:PrimaryHueColorConverter x:Key="PrimaryHueColorConverter" />
         <local:SelectedColorSVConverter x:Key="SelectedColorSVConverter" />
         <local:SaturationPositionConverter x:Key="SaturationPositionConverter" />
@@ -26,7 +26,7 @@
         <local:HvsToArgbConverter x:Key="HvsToArgbConverter" />
         <local:HvsToHexConverter x:Key="HvsToHexConverter" />
     </Window.Resources>
-    <Grid x:Name="MGrid" DataContext="{DynamicResource State}"
+    <Grid x:Name="MGrid" DataContext="{DynamicResource ViewModel}"
           >
         <Grid.RowDefinitions>
             <RowDefinition Height="165" />

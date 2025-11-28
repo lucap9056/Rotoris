@@ -103,7 +103,7 @@ namespace RotorisConfigurationTool.Preview
         private void DrawOptions(MenuOptionData[] options, int index = 0)
         {
             State.MenuOptions = options;
-            State.OptionSector = new RotorisLib.UI.State.OptionSectorData(Width, Height, options.Length, State.Padding);
+            State.OptionSector = new RotorisLib.UI.ViewModel.OptionSectorData(Width, Height, options.Length, State.Padding);
             State.FocusedMenuOptionIndex = index;
         }
     }

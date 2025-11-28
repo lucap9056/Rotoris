@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace RotorisConfigurationTool.ConfigurationControls.UiAppearance
 {
-    public class UiAppearanceState : DependencyObject
+    public class UiAppearanceViewModel : DependencyObject
     {
         public ICommand SetSizeCommand { get; }
         public ICommand SetAccentColorCommand { get; }
@@ -18,7 +18,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.UiAppearance
 
         private readonly Window window;
         private readonly SettingsManager settings;
-        public UiAppearanceState(Window w, SettingsManager s)
+        public UiAppearanceViewModel(Window w, SettingsManager s)
         {
             window = w;
             settings = s;
@@ -133,7 +133,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.UiAppearance
             DependencyProperty.Register(
                 nameof(UiSize),
                 typeof(double),
-                typeof(UiAppearanceState),
+                typeof(UiAppearanceViewModel),
                 new PropertyMetadata(0.0)
                 );
 
@@ -148,7 +148,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.UiAppearance
             DependencyProperty.Register(
                 nameof(AccentColor),
                 typeof(Color?),
-                typeof(UiAppearanceState),
+                typeof(UiAppearanceViewModel),
                 new PropertyMetadata(null)
                 );
 
@@ -164,7 +164,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.UiAppearance
             DependencyProperty.Register(
                 nameof(ForegroundColor),
                 typeof(Color?),
-                typeof(UiAppearanceState),
+                typeof(UiAppearanceViewModel),
                 new PropertyMetadata(null)
                 );
 
@@ -180,7 +180,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.UiAppearance
             DependencyProperty.Register(
                 nameof(BackgroundColor),
                 typeof(Color?),
-                typeof(UiAppearanceState),
+                typeof(UiAppearanceViewModel),
                 new PropertyMetadata(null)
                 );
 
@@ -191,14 +191,14 @@ namespace RotorisConfigurationTool.ConfigurationControls.UiAppearance
         }
     }
 
-    public class UiAppearanceStateConverter : System.Windows.Data.IMultiValueConverter
+    public class UiAppearanceViewModelConverter : System.Windows.Data.IMultiValueConverter
     {
         public object? Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (values.Length == 2 && values[0] is Component component && component.DataContext is MainContext ctx && values[1] is bool isTabSelected && isTabSelected)
             {
                 Window window = Window.GetWindow(component);
-                return new UiAppearanceState(window, ctx.Settings);
+                return new UiAppearanceViewModel(window, ctx.Settings);
             }
 
             return DependencyProperty.UnsetValue;
