@@ -31,7 +31,7 @@
                     {
                         continue;
                     }
-                    filePaths.Add(filePath);
+                    filePaths.Add(filePath.Replace(System.IO.Path.DirectorySeparatorChar, '/'));
                 }
             }
             catch (UnauthorizedAccessException ex)
