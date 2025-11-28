@@ -4,5 +4,8 @@
   </Folder>
   <Project Path="Rotoris/Rotoris.csproj" />
   <Project Path="RotorisConfigurationTool/RotorisConfigurationTool.csproj" Id="11bdfffc-1a9e-4705-9ecc-06542068b93c" />
+  <Project Path="RotorisLib.Tests/RotorisLib.Tests.csproj">
+    <Build Solution="Release|*" Project="false" />
+  </Project>
   <Project Path="RotorisLib/RotorisLib.csproj" Id="e8eba1a1-5cd8-4c72-ab02-9b5812e84ab4" />
 </Solution>
