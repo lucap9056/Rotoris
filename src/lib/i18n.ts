@@ -9,7 +9,7 @@ i18next.use(HttpBackend)
     ns: ['translation'],
     defaultNS: 'translation',
     backend: {
-      loadPath: '/locales/{{lng}}/{{ns}}.json',
+      loadPath: './locales/{{lng}}/{{ns}}.json',
     },
     interpolation: {
       escapeValue: false,
