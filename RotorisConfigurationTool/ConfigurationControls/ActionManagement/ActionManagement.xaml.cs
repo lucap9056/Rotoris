@@ -22,7 +22,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.ActionManagement
         }
         private void AppendActionKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if (e.Key == System.Windows.Input.Key.Enter && sender is TextBox textBox && textBox.DataContext is ActionManagementState ctx)
+            if (e.Key == System.Windows.Input.Key.Enter && sender is TextBox textBox && textBox.DataContext is ActionManagementViewModel ctx)
             {
                 if (ctx.AppendActionCommand.CanExecute(textBox))
                 {

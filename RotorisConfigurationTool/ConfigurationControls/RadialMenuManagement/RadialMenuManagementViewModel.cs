@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement
 {
-    public class RadialMenuManagementState : DependencyObject
+    public class RadialMenuManagementViewModel : DependencyObject
     {
         public ICommand EditMainRadialMenuCommand { get; }
         public ICommand AppendMenuCommand { get; }
@@ -16,7 +16,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement
 
         private readonly Window window;
         private readonly SettingsManager settings;
-        public RadialMenuManagementState(Window w, SettingsManager s)
+        public RadialMenuManagementViewModel(Window w, SettingsManager s)
         {
             window = w;
             settings = s;
@@ -31,7 +31,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement
             DependencyProperty.Register(
                 nameof(RadialMenuList),
                 typeof(IEnumerable<string>),
-                typeof(RadialMenuManagementState),
+                typeof(RadialMenuManagementViewModel),
                 new PropertyMetadata((IEnumerable<string>)[])
                 );
 
@@ -46,7 +46,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement
             DependencyProperty.Register(
                 nameof(AppendInputValue),
                 typeof(string),
-                typeof(RadialMenuManagementState),
+                typeof(RadialMenuManagementViewModel),
                 new PropertyMetadata("")
                 );
 
@@ -111,14 +111,14 @@ namespace RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement
         }
     }
 
-    public class RadialMenuManagementStateConverter : System.Windows.Data.IValueConverter
+    public class RadialMenuManagementViewModelConverter : System.Windows.Data.IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (value is Component component && component.DataContext is MainContext ctx)
             {
                 Window window = Window.GetWindow(component);
-                return new RadialMenuManagementState(window, ctx.Settings);
+                return new RadialMenuManagementViewModel(window, ctx.Settings);
             }
 
             return DependencyProperty.UnsetValue;

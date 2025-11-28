@@ -18,12 +18,12 @@ namespace Rotoris.MainViewer
             }
         }
 
-        private readonly RotorisLib.UI.State State = new();
+        private readonly RotorisLib.UI.ViewModel viewModel = new();
         public MainWindow()
         {
             InitializeComponent();
-            Resources["State"] = State;
-            InitializeStateSubscriptions();
+            Resources["ViewModel"] = viewModel;
+            InitializeViewModelSubscriptions();
             InitializeEventAggregatorSubscriptions();
             SourceInitialized += MainWindowSourceInitialized;
         }
@@ -42,8 +42,8 @@ namespace Rotoris.MainViewer
 
                 Point center = new(Width / 2 + Left, Height / 2 + Top);
 
-                Width = size + State.Padding;
-                Height = size + State.Padding;
+                Width = size + viewModel.Padding;
+                Height = size + viewModel.Padding;
                 Left = center.X - Width / 2;
                 Top = center.Y - Height / 2;
             }

@@ -16,7 +16,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement
         }
         private void EditTextKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter && sender is TextBox textBox && textBox.DataContext is RadialMenuItemState ctx)
+            if (e.Key == Key.Enter && sender is TextBox textBox && textBox.DataContext is RadialMenuItemViewModel ctx)
             {
                 ctx.UpdateMenuName();
             }
@@ -24,14 +24,14 @@ namespace RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement
 
         private void EditTextLostFocus(object sender, RoutedEventArgs e)
         {
-            if (sender is TextBox textBox && textBox.DataContext is RadialMenuItemState ctx)
+            if (sender is TextBox textBox && textBox.DataContext is RadialMenuItemViewModel ctx)
             {
                 ctx.UpdateMenuName();
             }
         }
     }
 
-    public class RadialMenuItemState : DependencyObject
+    public class RadialMenuItemViewModel : DependencyObject
     {
         public ICommand EditMenuNameCommand { get; }
         public ICommand EditMenuOptionsCommand { get; }
@@ -40,7 +40,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement
 
         public readonly Window window;
         public readonly SettingsManager settings;
-        public RadialMenuItemState(Window w, SettingsManager s, string name, ICommand removeMenuCommand)
+        public RadialMenuItemViewModel(Window w, SettingsManager s, string name, ICommand removeMenuCommand)
         {
             EditMenuNameCommand = new RelayCommand(ExecuteEditMenuName);
             EditMenuOptionsCommand = new RelayCommand(ExecuteEditMenuOptions);
@@ -87,7 +87,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement
             DependencyProperty.Register(
                 nameof(MenuName),
                 typeof(string),
-                typeof(RadialMenuItemState),
+                typeof(RadialMenuItemViewModel),
                 new PropertyMetadata("")
                 );
 
@@ -101,7 +101,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement
             DependencyProperty.Register(
                 nameof(EditingMenuName),
                 typeof(string),
-                typeof(RadialMenuItemState),
+                typeof(RadialMenuItemViewModel),
                 new PropertyMetadata("")
                 );
 
@@ -115,7 +115,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement
             DependencyProperty.Register(
                 nameof(IsEditing),
                 typeof(bool),
-                typeof(RadialMenuItemState),
+                typeof(RadialMenuItemViewModel),
                 new PropertyMetadata(false)
                 );
 
@@ -142,14 +142,14 @@ namespace RotorisConfigurationTool.ConfigurationControls.RadialMenuManagement
         }
     }
 
-    public class RadialMenuItemStateConverter : System.Windows.Data.IMultiValueConverter
+    public class RadialMenuItemViewModelConverter : System.Windows.Data.IMultiValueConverter
     {
         public object? Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (values.Length == 3 && values[0] is Component component && component.DataContext is MainContext ctx && values[1] is string menuName && values[2] is ICommand removeMenuCommand)
             {
                 Window window = Window.GetWindow(component);
-                return new RadialMenuItemState(window, ctx.Settings, menuName, removeMenuCommand);
+                return new RadialMenuItemViewModel(window, ctx.Settings, menuName, removeMenuCommand);
             }
 
             return DependencyProperty.UnsetValue;

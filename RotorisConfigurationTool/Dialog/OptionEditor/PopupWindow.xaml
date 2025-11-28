@@ -9,16 +9,16 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Title="" SizeToContent="WidthAndHeight"
-        d:DataContext="{d:DesignInstance local:OptionEditorState}"
+        d:DataContext="{d:DesignInstance local:OptionEditorViewModel}"
         >
     <Window.Resources>
-        <local:OptionEditorState x:Key="State" />
+        <local:OptionEditorViewModel x:Key="ViewModel" />
         <local:BuiltInOptionNameConverter x:Key="BuiltInOptionNameConverter" />
         <local:OptionSelectionViewVisibilityConverter x:Key="OptionSelectionViewVisibilityConverter" />
         <local:I18nResourceConverter x:Key="I18nResourceConverter" />
     </Window.Resources>
     <Window.DataContext>
-        <DynamicResource ResourceKey="State" />
+        <DynamicResource ResourceKey="ViewModel" />
     </Window.DataContext>
     <Grid Margin="10">
         <Grid.RowDefinitions>

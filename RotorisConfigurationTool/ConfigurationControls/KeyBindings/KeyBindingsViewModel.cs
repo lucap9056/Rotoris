@@ -16,7 +16,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.KeyBindings
         ClockwiseKey,
         CounterclockwiseKey
     }
-    public class KeyBindingsState : DependencyObject
+    public class KeyBindingsViewModel : DependencyObject
     {
         public ICommand SaveCommand { get; }
         public ICommand SetDefaultCommand { get; }
@@ -26,7 +26,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.KeyBindings
         private readonly SettingsManager settings;
         private readonly GlobalInputHook inputHook;
         private EventHandler<GlobalInputHook.InputHookEventArgs>? inputHookHandler;
-        public KeyBindingsState(SettingsManager s, GlobalInputHook hook)
+        public KeyBindingsViewModel(SettingsManager s, GlobalInputHook hook)
         {
             SaveCommand = new RelayCommand(ExecuteSave);
             SetDefaultCommand = new RelayCommand(ExecuteSetDefault);
@@ -117,7 +117,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.KeyBindings
             DependencyProperty.Register(
                 nameof(EditingKey),
                 typeof(TriggerKeys),
-                typeof(KeyBindingsState),
+                typeof(KeyBindingsViewModel),
                 new PropertyMetadata(TriggerKeys.None)
                 );
 
@@ -131,7 +131,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.KeyBindings
             DependencyProperty.Register(
                 nameof(PrimaryKey),
                 typeof(Hotkey),
-                typeof(KeyBindingsState),
+                typeof(KeyBindingsViewModel),
                 new PropertyMetadata(new Hotkey())
                 );
 
@@ -145,7 +145,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.KeyBindings
             DependencyProperty.Register(
                 nameof(ClockwiseKey),
                 typeof(Hotkey),
-                typeof(KeyBindingsState),
+                typeof(KeyBindingsViewModel),
                 new PropertyMetadata(new Hotkey())
                 );
 
@@ -159,7 +159,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.KeyBindings
             DependencyProperty.Register(
                 nameof(CounterclockwiseKey),
                 typeof(Hotkey),
-                typeof(KeyBindingsState),
+                typeof(KeyBindingsViewModel),
                 new PropertyMetadata(new Hotkey())
                 );
 
@@ -213,13 +213,13 @@ namespace RotorisConfigurationTool.ConfigurationControls.KeyBindings
             return false;
         }
     }
-    public class KeyBindingsStateConverter : System.Windows.Data.IMultiValueConverter
+    public class KeyBindingsViewModelConverter : System.Windows.Data.IMultiValueConverter
     {
         public object? Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (values.Length == 2 && values[0] is MainContext ctx && values[1] is bool isTabSelected && isTabSelected)
             {
-                return new KeyBindingsState(ctx.Settings, ctx.InputHook);
+                return new KeyBindingsViewModel(ctx.Settings, ctx.InputHook);
             }
 
             return DependencyProperty.UnsetValue;
@@ -251,7 +251,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.KeyBindings
     {
         public object? Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (values.Length == 2 && values[0] is bool IsActive && !IsActive && values[1] is KeyBindingsState ctx && ctx.DisableKeyboardCaptureCommand.CanExecute(IsActive))
+            if (values.Length == 2 && values[0] is bool IsActive && !IsActive && values[1] is KeyBindingsViewModel ctx && ctx.DisableKeyboardCaptureCommand.CanExecute(IsActive))
             {
                 ctx.DisableKeyboardCaptureCommand.Execute(IsActive);
             }

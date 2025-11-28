@@ -20,7 +20,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.ActionManagement
         }
         private void EditTextKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter && sender is TextBox textBox && textBox.DataContext is ActionItemState ctx)
+            if (e.Key == Key.Enter && sender is TextBox textBox && textBox.DataContext is ActionItemViewModel ctx)
             {
                 ctx.UpdateActionName();
             }
@@ -28,13 +28,13 @@ namespace RotorisConfigurationTool.ConfigurationControls.ActionManagement
 
         private void EditTextLostFocus(object sender, RoutedEventArgs e)
         {
-            if (sender is TextBox textBox && textBox.DataContext is ActionItemState ctx)
+            if (sender is TextBox textBox && textBox.DataContext is ActionItemViewModel ctx)
             {
                 ctx.UpdateActionName();
             }
         }
     }
-    internal class ActionItemState : DependencyObject
+    internal class ActionItemViewModel : DependencyObject
     {
         public ICommand EditActionNameCommand { get; }
         public ICommand ShowContextMenuCommand { get; }
@@ -44,7 +44,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.ActionManagement
         public ICommand UseNotepadPlusPlusCommand { get; }
 
         private readonly SettingsManager settings;
-        public ActionItemState(SettingsManager s, EditorAvailability availableEditors, string name, ICommand removeActionCommand)
+        public ActionItemViewModel(SettingsManager s, EditorAvailability availableEditors, string name, ICommand removeActionCommand)
         {
             EditActionNameCommand = new RelayCommand(ExecuteEditActionName);
             ShowContextMenuCommand = new RelayCommand(ExecuteShowContextMenu);
@@ -174,7 +174,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.ActionManagement
             DependencyProperty.Register(
                 nameof(AvailableEditors),
                 typeof(EditorAvailability),
-                typeof(ActionManagementState),
+                typeof(ActionManagementViewModel),
                 new PropertyMetadata(new EditorAvailability { }));
         public EditorAvailability AvailableEditors
         {
@@ -186,7 +186,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.ActionManagement
             DependencyProperty.Register(
                 nameof(ActionName),
                 typeof(string),
-                typeof(ActionItemState),
+                typeof(ActionItemViewModel),
                 new PropertyMetadata(""));
         public string ActionName
         {
@@ -198,7 +198,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.ActionManagement
             DependencyProperty.Register(
                 nameof(EditingActionName),
                 typeof(string),
-                typeof(ActionItemState),
+                typeof(ActionItemViewModel),
                 new PropertyMetadata(""));
         public string EditingActionName
         {
@@ -210,7 +210,7 @@ namespace RotorisConfigurationTool.ConfigurationControls.ActionManagement
             DependencyProperty.Register(
                 nameof(IsEditing),
                 typeof(bool),
-                typeof(ActionItemState),
+                typeof(ActionItemViewModel),
                 new PropertyMetadata(false));
         public bool IsEditing
         {
@@ -237,13 +237,13 @@ namespace RotorisConfigurationTool.ConfigurationControls.ActionManagement
     }
 
 
-    public class ActionItemStateConverter : System.Windows.Data.IMultiValueConverter
+    public class ActionItemViewModelConverter : System.Windows.Data.IMultiValueConverter
     {
         public object? Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (values.Length == 3 && values[0] is Component component && component.DataContext is MainContext ctx && values[1] is string menuName && values[2] is ICommand removeActionCommand)
             {
-                return new ActionItemState(ctx.Settings, ctx.AvailableEditors, menuName, removeActionCommand);
+                return new ActionItemViewModel(ctx.Settings, ctx.AvailableEditors, menuName, removeActionCommand);
             }
 
             return DependencyProperty.UnsetValue;

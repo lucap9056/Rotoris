@@ -20,15 +20,15 @@
                 </Grid>
             </VisualBrush.Visual>
         </VisualBrush>
-        <local:UiAppearanceStateConverter x:Key="UiAppearanceStateConverter" />
+        <local:UiAppearanceViewModelConverter x:Key="UiAppearanceViewModelConverter" />
         <local:BrushFromColorConverter x:Key="BrushFromColorConverter" />
     </UserControl.Resources>
 
     <Grid Margin="15"
-          d:DataContext="{d:DesignInstance local:UiAppearanceState}"
+          d:DataContext="{d:DesignInstance local:UiAppearanceViewModel}"
           >
         <Grid.DataContext>
-            <MultiBinding Converter="{StaticResource UiAppearanceStateConverter}">
+            <MultiBinding Converter="{StaticResource UiAppearanceViewModelConverter}">
                 <Binding RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
                 <Binding RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" Path="IsTabSelected" />
             </MultiBinding>
