@@ -187,9 +187,13 @@
         /// </summary>
         /// <param name="other">The hotkey to compare with.</param>
         /// <returns><c>true</c> if the hotkeys are identical; otherwise, <c>false</c>.</returns>
-        public bool Equals(Hotkey other)
+        public bool Equals(Hotkey? other)
         {
-            return VirtualKeyCode == VirtualKeyCode && GetModifiers() == other.GetModifiers();
+            if (other is null)
+            {
+                return false;
+            }
+            return VirtualKeyCode == other.VirtualKeyCode && GetModifiers() == other.GetModifiers();
         }
 
         public override bool Equals(object? obj)
