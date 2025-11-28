@@ -76,7 +76,10 @@ namespace Rotoris.LuaModules
         public void task(string actionId)
         {
             Log.Info($"Publishing task action '{actionId}' to EventAggregator.");
-            EventAggregator.PublishExecuteAction(actionId);
+            Task.Run(() =>
+            {
+                EventAggregator.PublishExecuteAction(actionId);
+            });
         }
 
         public void delay(int milliseconds)
