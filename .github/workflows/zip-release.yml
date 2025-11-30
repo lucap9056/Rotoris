@@ -1,0 +1,63 @@
+name: Auto Zip Release and Cleanup
+
+on:
+  workflow_run:
+    workflows: ["Build and Test"] 
+    types: 
+      - completed
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} 
+
+jobs:
+  cleanup_and_release:
+    runs-on: ubuntu-latest
+    
+    env:
+      COMMIT_SHA: ${{ github.event.workflow_run.head_sha }}
+      
+    steps:
+    
+    - name: 獲取 Unix 時間戳並設定 Tag 名稱
+      run: |
+        TIMESTAMP=$(date +%s)
+        
+        echo "TAG_NAME=Rotoris_beta_${TIMESTAMP}" >> $GITHUB_ENV
+        
+        echo "ZIP_FILE_NAME=Rotoris-beta-${TIMESTAMP}.zip" >> $GITHUB_ENV
+        echo "TIMESTAMP=${TIMESTAMP}" >> $GITHUB_ENV
+
+    - name: 刪除舊的測試版本和標籤
+      uses: dev-drprasad/delete-tag-and-release@v1.1
+      with:
+        delete_references_matching: 'Rotoris_beta-*'
+        tag_regex: true
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        keep_last_n_tags: 1 
+        
+    - name: 下載編譯完成的 Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: release-compiled-files-${{ env.COMMIT_SHA }} 
+        run-id: ${{ github.event.workflow_run.id }}
+        path: downloaded-files/
+
+    - name: 建立 Zip 壓縮檔
+      run: |
+        # 進入下載的 Artifact 資料夾
+        cd downloaded-files/release-compiled-files-${{ env.COMMIT_SHA }}
+        # 將內容壓縮到上層目錄，使用新的 ZIP_FILE_NAME
+        zip -r ../${{ env.ZIP_FILE_NAME }} .
+        
+    - name: 建立新的測試 Release (草稿)
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.TAG_NAME }}
+        name: 自動化測試版本 (Rotoris Beta ${{ env.TIMESTAMP }})
+        body: |
+          此為 Rotoris 專案的自動化測試版本（Beta），由 Commit ${{ env.COMMIT_SHA }} 編譯產生。
+          版本標籤：${{ env.TAG_NAME }}
+          請使用此版本進行測試。
+        draft: true
+        prerelease: true
+        files: downloaded-files/*.zip
