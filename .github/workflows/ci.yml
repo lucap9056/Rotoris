@@ -1,4 +1,4 @@
-name: CI/CD
+name: Build, Test, and Beta Release
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    if: github.event.pull_request.merged == true
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true }}
     runs-on: windows-latest
     outputs:
       artifact_name: ${{ steps.set_artifact_name.outputs.name }}
@@ -45,8 +45,7 @@ jobs:
         retention-days: 1
 
   release:
-    # This job runs only after the build job is successful and on a merged PR.
-    if: github.event.pull_request.merged == true
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true }}
     needs: build
     runs-on: ubuntu-latest
     
