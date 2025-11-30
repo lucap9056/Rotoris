@@ -49,6 +49,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     
+    permissions:
+      contents: write
+
     env:
       COMMIT_SHA: ${{ github.sha }}
       
