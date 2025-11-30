@@ -6,14 +6,14 @@ on:
       - main
     types:
       - closed
-    if: github.event.pull_request.merged == true
   workflow_dispatch:
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true
     runs-on: windows-latest
     env:
-      BUILD_OUTPUT_PATH: .bin/Release/ 
+      BUILD_OUTPUT_PATH: publish-output
 
     steps:
     - name: Checkout Code
@@ -35,4 +35,4 @@ jobs:
       with:
         name: release-compiled-files-${{ github.sha }}
         path: ${{ env.BUILD_OUTPUT_PATH }}
-        retention-days: 7
+        retention-days: 1
