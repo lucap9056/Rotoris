@@ -1,0 +1,137 @@
+name: Automated Setup Installer Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    outputs:
+      artifact_name: ${{ steps.set_artifact_name.outputs.name }}
+    env:
+      BUILD_OUTPUT_PATH: publish-output
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x' 
+        
+    - name: Build Release Version
+      run: dotnet publish Rotoris.slnx -c Release -o ${{ env.BUILD_OUTPUT_PATH }}
+      
+    - name: Run Tests
+      run: dotnet test Rotoris.slnx --configuration Release --no-build
+
+    - name: Set Artifact Name
+      id: set_artifact_name
+      shell: pwsh
+      run: '"name=release-files-${{ github.sha }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Append'
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.set_artifact_name.outputs.name }}
+        path: ${{ env.BUILD_OUTPUT_PATH }}
+        retention-days: 3
+
+  release:
+    needs: build
+    runs-on: windows-latest
+    
+    permissions:
+      contents: write
+
+    env:
+      COMMIT_SHA: ${{ github.sha }}
+      TAG_NAME: ${{ github.ref_name }}
+      ARTIFACT_DOWNLOAD_PATH: downloaded-files
+      ISS_FILE_NAME: Rotoris.iss
+      APP_NAME: Rotoris
+      INSTALLER_FILE_NAME: Rotoris_${{ github.ref_name }}_setup.exe
+      
+    steps:
+    - name: Download Compiled Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ needs.build.outputs.artifact_name }}
+        path: ${{ env.ARTIFACT_DOWNLOAD_PATH }}
+        
+    - name: Setup Inno Setup
+      uses: dinhma/setup-inno-setup@v1
+      with:
+        version: '6.2.2'
+
+    - name: Create Inno Setup Script
+      shell: pwsh
+      run: |
+        @"
+        #define MyAppName "${{ env.APP_NAME }}s"
+        #define MyAppVersion "${{ env.TAG_NAME }}"
+        #define MyAppPublisher "Rotoris"
+        #define MyAppExeName "Rotoris.exe"
+
+        [Setup]
+        AppId={{${{ secrets.APP_ID }}}}
+        AppName={#MyAppName}
+        AppVersion={#MyAppVersion}
+        ;AppVerName={#MyAppName} {#MyAppVersion}
+        AppPublisher={#MyAppPublisher}
+        DefaultDirName={autopf}\{#MyAppName}
+        UninstallDisplayIcon={app}\{#MyAppExeName}
+        ArchitecturesAllowed=x64compatible
+        ArchitecturesInstallIn64BitMode=x64compatible
+        DefaultGroupName={#MyAppName}
+        AllowNoIcons=yes
+        PrivilegesRequired=lowest
+        PrivilegesRequiredOverridesAllowed=dialog
+        OutputDir=.
+        OutputBaseFilename={#MyAppName}_{#MyAppVersion}_setup
+        SolidCompression=yes
+        WizardStyle=modern
+
+        [Ini]
+        Filename: "{app}\app.ini"; Section: "Version"; Key: "AppVersion"; String: "{#SetupSetting('AppVersion')}"
+
+        [Languages]
+        Name: "english"; MessagesFile: "compiler:Default.isl"
+
+        [Tasks]
+        Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+
+        [Files]
+        Source: "${{ env.ARTIFACT_DOWNLOAD_PATH }}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+        Source: "${{ env.ARTIFACT_DOWNLOAD_PATH }}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+        [Registry]
+        Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueName: {#MyAppName}; Flags: uninsdeletevalue
+
+        [Icons]
+        Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+        Name: "{group}\{#MyAppName} ConfigurationTool"; Filename: "{app}\{#MyAppName}ConfigurationTool.exe"
+        Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
+        Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+
+        [Run]
+        Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+        "@ | Out-File -FilePath ${{ env.ISS_FILE_NAME }} -Encoding UTF8
+
+    - name: Compile Inno Setup Installer
+      run: iscc.exe ${{ env.ISS_FILE_NAME }}
+
+    - name: Create New Release
+      uses: softprops/action-gh-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.TAG_NAME }}
+        name: Automated Release (Rotoris Tag ${{ env.TAG_NAME }})
+        body: |
+          This is an automated installer package release for the Rotoris project corresponding to Git Tag ${{ env.TAG_NAME }}.
+        prerelease: true
+        files: ${{ env.INSTALLER_FILE_NAME }}
