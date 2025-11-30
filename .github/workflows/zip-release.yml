@@ -24,14 +24,6 @@ jobs:
         
         echo "ZIP_FILE_NAME=Rotoris-beta-${TIMESTAMP}.zip" >> $GITHUB_ENV
         echo "TIMESTAMP=${TIMESTAMP}" >> $GITHUB_ENV
-
-    - name: 刪除舊的測試版本和標籤
-      uses: dev-drprasad/delete-older-tags@v0.2.1 
-      with:
-        delete_references_matching: 'Rotoris_beta-.*'
-        tag_regex: true
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        keep_last_n_tags: 1 
         
     - name: 下載編譯完成的 Artifacts
       uses: actions/download-artifact@v4
