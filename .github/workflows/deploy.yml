@@ -1,4 +1,4 @@
-name: 🚀 Deploy Vite to GitHub Pages (using Bun)
+name: Deploy Pages
 
 on:
   push:
@@ -39,7 +39,7 @@ jobs:
       - name: Build project (Vite)
         run: bun run build
 
-      - name: ⬆Upload Pages Artifact
+      - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './dist' 
