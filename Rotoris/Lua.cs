@@ -117,8 +117,10 @@ namespace Rotoris
             }
             pool.ForEach((vm, isDynamic) =>
             {
-                LuaCanvas? canvas = vm[LuaCache.GlobalName] as LuaCanvas;
-                canvas?.Pause();
+                if (vm[LuaCanvas.GlobalName] is LuaCanvas canvas)
+                {
+                    canvas.Pause();
+                }
             });
             cache.clear();
             sys.Clear();
