@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - docs/v1
+  pull_request:
+    branches:
+      - docs/v1
+    types:
+      - closed
   workflow_dispatch:
 
 permissions:
