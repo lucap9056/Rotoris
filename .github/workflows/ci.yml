@@ -1,0 +1,91 @@
+name: CI/CD
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+  workflow_dispatch:
+
+jobs:
+  build:
+    if: github.event.pull_request.merged == true
+    runs-on: windows-latest
+    outputs:
+      artifact_name: ${{ steps.set_artifact_name.outputs.name }}
+    env:
+      BUILD_OUTPUT_PATH: publish-output
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x' 
+        
+    - name: Build Release Version
+      run: dotnet publish Rotoris.slnx -c Release -o ${{ env.BUILD_OUTPUT_PATH }}
+      
+    - name: Run Tests
+      run: dotnet test Rotoris.slnx --configuration Release --no-build
+
+    - name: Set Artifact Name
+      id: set_artifact_name
+      shell: pwsh
+      run: '"name=release-files-${{ github.sha }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Append'
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.set_artifact_name.outputs.name }}
+        path: ${{ env.BUILD_OUTPUT_PATH }}
+        retention-days: 1
+
+  release:
+    # This job runs only after the build job is successful and on a merged PR.
+    if: github.event.pull_request.merged == true
+    needs: build
+    runs-on: ubuntu-latest
+    
+    env:
+      COMMIT_SHA: ${{ github.sha }}
+      
+    steps:
+    - name: 獲取 Unix 時間戳並設定 Tag 名稱
+      run: |
+        TIMESTAMP=$(date +%s)
+        echo "TAG_NAME=Rotoris_beta_${TIMESTAMP}" >> $GITHUB_ENV
+        echo "ZIP_FILE_NAME=Rotoris-beta-${TIMESTAMP}.zip" >> $GITHUB_ENV
+        echo "TIMESTAMP=${TIMESTAMP}" >> $GITHUB_ENV
+        
+    - name: 下載編譯完成的 Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ needs.build.outputs.artifact_name }}
+        path: downloaded-files/
+
+    - name: 添加 app.ini 版本資訊
+      run: |
+        VERSION_STRING="${{ env.TIMESTAMP }}"
+        echo -e "[Version]\nAppVersion=${VERSION_STRING}" > downloaded-files/app.ini
+
+    - name: 建立 Zip 壓縮檔
+      run: |
+        cd downloaded-files
+        zip -r ../${{ env.ZIP_FILE_NAME }} .
+        
+    - name: 建立新的測試 Release (草稿)
+      uses: softprops/action-gh-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.TAG_NAME }}
+        name: 自動化測試版本 (Rotoris Beta ${{ env.TIMESTAMP }})
+        body: |
+          此為 Rotoris 專案的自動化測試版本（Beta），由 Commit ${{ env.COMMIT_SHA }} 編譯產生。
+        draft: true
+        prerelease: true
+        files: ${{ env.ZIP_FILE_NAME }}
