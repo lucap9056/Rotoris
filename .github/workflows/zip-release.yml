@@ -26,9 +26,9 @@ jobs:
         echo "TIMESTAMP=${TIMESTAMP}" >> $GITHUB_ENV
 
     - name: 刪除舊的測試版本和標籤
-      uses: dev-drprasad/delete-tag-and-release@v1.1
+      uses: dev-drprasad/delete-older-tags@v0.2.1 
       with:
-        delete_references_matching: 'Rotoris_beta-*'
+        delete_references_matching: 'Rotoris_beta-.*'
         tag_regex: true
         github_token: ${{ secrets.GITHUB_TOKEN }}
         keep_last_n_tags: 1 
