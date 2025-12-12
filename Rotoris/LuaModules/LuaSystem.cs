@@ -34,22 +34,22 @@ namespace Rotoris.LuaModules
             return process;
         }
 
-        public void get_executing(string hash, LuaFunction callback)
+        public void get_executing(string id, LuaFunction callback)
         {
-            if (string.IsNullOrWhiteSpace(hash))
+            if (string.IsNullOrWhiteSpace(id))
             {
-                throw new ArgumentException("Process hash cannot be empty.", nameof(hash));
+                throw new ArgumentException("Process id cannot be empty.", nameof(id));
             }
             if (callback == null)
             {
                 throw new ArgumentNullException(nameof(callback));
             }
 
-            Process? process = processes.Find(p => p.Hash == hash);
+            Process? process = processes.Find(p => p.Id == id);
 
             if (process == null)
             {
-                Log.Error($"Process with hash '{hash}' not found or already completed.");
+                Log.Error($"Process with id '{id}' not found or already completed.");
                 return;
             }
 
@@ -57,7 +57,7 @@ namespace Rotoris.LuaModules
 
             if (context == null)
             {
-                Log.Error($"Process with hash '{hash}' has no active context (might not have started yet).");
+                Log.Error($"Process with id '{id}' has no active context (might not have started yet).");
                 return;
             }
 
@@ -65,11 +65,11 @@ namespace Rotoris.LuaModules
             {
                 callback.Call(context);
 
-                Log.Info($"Successfully executed callback for process '{hash}'.");
+                Log.Info($"Successfully executed callback for process '{id}'.");
             }
             catch (Exception ex)
             {
-                Log.Error($"An error occurred during Lua callback execution for hash '{hash}'. Details: {ex.Message}");
+                Log.Error($"An error occurred during Lua callback execution for id '{id}'. Details: {ex.Message}");
             }
         }
 
@@ -86,6 +86,7 @@ namespace Rotoris.LuaModules
         {
             Task.Delay(milliseconds).Wait();
         }
+
         public void open(string targetPath)
         {
 
@@ -129,7 +130,7 @@ namespace Rotoris.LuaModules
         {
             public delegate void ProcessDoneEventHandler(Process proc);
             public event ProcessDoneEventHandler? ProcessDone;
-            public readonly string Hash = Guid.NewGuid().ToString("N");
+            public readonly string Id = Guid.NewGuid().ToString("N");
             private ProcessContext? context;
             private ManualResetEventSlim? manualEvent;
 
@@ -178,7 +179,7 @@ namespace Rotoris.LuaModules
 
                         if (table?["OnStart"] is LuaFunction onStart)
                         {
-                            onStart.Call(ctx, Hash);
+                            onStart.Call(ctx, Id);
                         }
 
                         LuaFunction? onError = table?["OnError"] as LuaFunction;
