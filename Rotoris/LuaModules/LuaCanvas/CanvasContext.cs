@@ -40,7 +40,7 @@ namespace Rotoris.LuaModules.LuaCanvas
         {
             public int CanvasWidth;
             public int CanvasHeight;
-            public float DeltaTime;
+            public double DeltaTime;
         }
         public readonly PaintCache paints = new();
         public readonly ImageCache images = new();

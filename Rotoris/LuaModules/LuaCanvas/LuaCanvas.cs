@@ -113,7 +113,7 @@ return {
             {
                 CanvasWidth = bitmap.Width,
                 CanvasHeight = bitmap.Height,
-                DeltaTime = 0f
+                DeltaTime = 0
             };
 
             using var ctx = new CanvasContext(canvas);
@@ -129,19 +129,34 @@ return {
                 Render();
             }
 
+            var onFrameDelay = table["OnFrameDelay"] as LuaFunction;
+
             if (table["OnUpdate"] is LuaFunction update)
             {
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
+
                 try
                 {
                     var onUpdate = update.Call;
                     while (!ctx.IsDone && !isCancellationRequested)
                     {
-                        args.DeltaTime = (float)stopwatch.Elapsed.TotalSeconds;
                         stopwatch.Restart();
                         onUpdate(ctx, args, state);
                         Render();
+
+                        stopwatch.Stop();
+                        double updateTime = stopwatch.Elapsed.TotalSeconds;
+
+                        stopwatch.Restart();
+
+                        onFrameDelay?.Call(updateTime);
+
+                        stopwatch.Stop();
+
+                        double delayTime = stopwatch.Elapsed.TotalSeconds;
+
+                        args.DeltaTime = updateTime + delayTime;
                     }
                 }
                 finally
