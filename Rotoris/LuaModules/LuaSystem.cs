@@ -217,9 +217,11 @@ namespace Rotoris.LuaModules
 
                         context = ctx;
 
-                        if (table?["TimeoutMs"] is double timeoutMs)
+                        if (table?["TimeoutMs"] != null)
                         {
-                            bool completed = manualEvent.Wait((int)timeoutMs);
+                            int timeoutMs = Convert.ToInt32(table["TimeoutMs"]);
+
+                            bool completed = manualEvent.Wait(timeoutMs);
 
                             if (!completed)
                             {
