@@ -32,6 +32,7 @@
     <None Remove="Resources\lua_types\menu.d.lua" />
     <None Remove="Resources\lua_types\result.d.lua" />
     <None Remove="Resources\lua_types\sys.d.lua" />
+    <None Remove="Resources\lua_types\timer.d.lua" />
     <None Remove="Resources\lua_types\windows.d.lua" />
     <None Remove="Resources\option_icons\calculator.png" />
     <None Remove="Resources\option_icons\crop.png" />
@@ -100,6 +101,7 @@
     <EmbeddedResource Include="Resources\lua_types\sys.d.lua">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\lua_types\timer.d.lua" />
     <EmbeddedResource Include="Resources\lua_types\windows.d.lua" />
     <ProjectReference Include="..\RotorisLib\RotorisLib.csproj" />
     <Resource Include="Resources\option_icons\calculator.png" />
