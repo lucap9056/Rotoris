@@ -1,4 +1,5 @@
 ﻿using NLua;
+using Rotoris.Logger;
 using SkiaSharp;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -129,10 +130,9 @@ return {
                 Render();
             }
 
-            var onFrameDelay = table["OnFrameDelay"] as LuaFunction;
-
-            if (table["OnUpdate"] is LuaFunction update)
+            if (table["OnUpdate"] is LuaFunction update && !ctx.IsDone)
             {
+                var onFrameDelay = table["OnFrameDelay"] as LuaFunction;
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
 
@@ -158,6 +158,10 @@ return {
 
                         args.DeltaTime = updateTime + delayTime;
                     }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"CRITICAL: An exception occurred during the Lua update loop. Loop terminated. Error: {ex.Message}");
                 }
                 finally
                 {
