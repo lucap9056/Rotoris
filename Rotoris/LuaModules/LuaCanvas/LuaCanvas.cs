@@ -98,6 +98,7 @@ return {
 --- @class Rotoris.LuaCanvas.DrawBlueprint
 --- @field OnInit fun(ctx: Rotoris.LuaCanvas.CanvasContext, args: Rotoris.LuaCanvas.CanvasContext.Args): any Initializes the drawing context. Returns an optional state object.
 --- @field OnUpdate? fun(ctx: Rotoris.LuaCanvas.CanvasContext, args: Rotoris.LuaCanvas.CanvasContext.Args, state: any) Updates the drawing context. Called repeatedly until done.
+--- @field OnFrameDelay? fun(updateTime:number) Called after each successful frame update (`OnUpdate`). Useful for implementing frame rate limiting or delays.
          */
         public void draw(LuaTable table)
         {
