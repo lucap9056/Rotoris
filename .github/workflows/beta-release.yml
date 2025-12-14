@@ -88,6 +88,5 @@ jobs:
         name: 自動化測試版本 (Rotoris Beta ${{ env.TIMESTAMP }})
         body: |
           此為 Rotoris 專案的自動化測試版本（Beta），由 Commit ${{ env.COMMIT_SHA }} 編譯產生。
-        draft: true
         prerelease: true
         files: ${{ env.ZIP_FILE_NAME }}
