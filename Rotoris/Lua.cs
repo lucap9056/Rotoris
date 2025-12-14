@@ -40,6 +40,7 @@ namespace Rotoris
         private readonly LuaFileSystem fs = new();
         private readonly LuaAudio audio = new();
         private readonly LuaCache cache = new();
+        private readonly LuaTimer timer = new();
         private readonly LuaVmPool pool = new(min, max);
         private LuaModuleSearcher luaModuleSearcher = new([]);
         private bool isInitialized = false;
@@ -64,6 +65,7 @@ namespace Rotoris
                 vm[LuaMedia.GlobalName] = new LuaMedia(mediaSessionsManager);
                 vm[LuaAudio.GlobalName] = audio;
                 vm[LuaCache.GlobalName] = cache;
+                vm[LuaTimer.GlobalName] = timer;
                 vm[LuaMenu.GlobalName] = menu;
                 vm[LuaLog.GlobalMame] = log;
                 vm[LuaHID.GlobalName] = hid;
@@ -123,6 +125,7 @@ namespace Rotoris
                 }
             });
             cache.clear();
+            timer.Clear();
             sys.Clear();
             
         }
