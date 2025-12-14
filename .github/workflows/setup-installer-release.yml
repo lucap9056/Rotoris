@@ -127,8 +127,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ env.TAG_NAME }}
-        name: Automated Release (Rotoris Tag ${{ env.TAG_NAME }})
-        body: |
-          This is an automated installer package release for the Rotoris project corresponding to Git Tag ${{ env.TAG_NAME }}.
-        prerelease: true
+        name: ${{ env.TAG_NAME }}
+        draft: false
+        prerelease: false
+        make_latest: true
         files: ${{ env.INSTALLER_FILE_NAME }}
