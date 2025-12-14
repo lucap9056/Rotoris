@@ -18,7 +18,7 @@
   <ItemGroup>
     <None Remove="Resources\lua_types\async.d.lua" />
     <None Remove="Resources\lua_types\audio.d.lua" />
-    <None Remove="Resources\lua_types\c-sharp.d.lua" />
+    <None Remove="Resources\lua_types\bytes.d.lua" />
     <None Remove="Resources\lua_types\cache.d.lua" />
     <None Remove="Resources\lua_types\canvas.d.lua" />
     <None Remove="Resources\lua_types\canvas_context.d.lua" />
@@ -63,9 +63,7 @@
     <EmbeddedResource Include="Resources\lua_types\audio.d.lua">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\lua_types\c-sharp.d.lua">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\lua_types\bytes.d.lua" />
     <EmbeddedResource Include="Resources\lua_types\cache.d.lua">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
