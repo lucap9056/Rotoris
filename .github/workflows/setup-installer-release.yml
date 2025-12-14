@@ -61,11 +61,6 @@ jobs:
       with:
         name: ${{ needs.build.outputs.artifact_name }}
         path: ${{ env.ARTIFACT_DOWNLOAD_PATH }}
-        
-    - name: Setup Inno Setup
-      uses: dinhma/setup-inno-setup@v1
-      with:
-        version: '6.2.2'
 
     - name: Create Inno Setup Script
       shell: pwsh
@@ -121,8 +116,10 @@ jobs:
         Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
         "@ | Out-File -FilePath ${{ env.ISS_FILE_NAME }} -Encoding UTF8
 
-    - name: Compile Inno Setup Installer
-      run: iscc.exe ${{ env.ISS_FILE_NAME }}
+    - name: Compile Inno Setup Installer with Minionguyjpro
+      uses: Minionguyjpro/Inno-Setup-Action@v1.2.7
+      with:
+        path: ${{ env.ISS_FILE_NAME }}
 
     - name: Create New Release
       uses: softprops/action-gh-release@v2
