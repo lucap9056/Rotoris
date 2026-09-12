@@ -56,37 +56,37 @@ jobs:
       COMMIT_SHA: ${{ github.sha }}
       
     steps:
-    - name: 獲取 Unix 時間戳並設定 Tag 名稱
+    - name: Get Unix Timestamp and Set Tag Name
       run: |
         TIMESTAMP=$(date +%s)
         echo "TAG_NAME=Rotoris_beta_${TIMESTAMP}" >> $GITHUB_ENV
         echo "ZIP_FILE_NAME=Rotoris-beta-${TIMESTAMP}.zip" >> $GITHUB_ENV
         echo "TIMESTAMP=${TIMESTAMP}" >> $GITHUB_ENV
         
-    - name: 下載編譯完成的 Artifacts
+    - name: Download Compiled Artifacts
       uses: actions/download-artifact@v4
       with:
         name: ${{ needs.build.outputs.artifact_name }}
         path: downloaded-files/
 
-    - name: 添加 app.ini 版本資訊
+    - name: Add app.ini Version Info
       run: |
         VERSION_STRING="${{ env.TIMESTAMP }}"
         echo -e "[Version]\nAppVersion=${VERSION_STRING}" > downloaded-files/app.ini
 
-    - name: 建立 Zip 壓縮檔
+    - name: Create Zip Archive
       run: |
         cd downloaded-files
         zip -r ../${{ env.ZIP_FILE_NAME }} .
         
-    - name: 建立新的測試 Release (草稿)
+    - name: Create New Beta Release
       uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ env.TAG_NAME }}
-        name: 自動化測試版本 (Rotoris Beta ${{ env.TIMESTAMP }})
+        name: Automated Beta Build (Rotoris Beta ${{ env.TIMESTAMP }})
         body: |
-          此為 Rotoris 專案的自動化測試版本（Beta），由 Commit ${{ env.COMMIT_SHA }} 編譯產生。
+          This is an automated beta build of the Rotoris project, built from commit ${{ env.COMMIT_SHA }}.
         prerelease: true
         files: ${{ env.ZIP_FILE_NAME }}
