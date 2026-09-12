@@ -40,7 +40,7 @@ namespace RotorisLib.Tests
         }
 
         [Fact]
-        public void AppThemeBrushes_Constructor_UsesUwpDefaultsInTestEnvironment()
+        public void AppThemeBrushes_Constructor_AppliesDefaultOpacityWithoutFallback()
         {
             System.IO.StringWriter consoleOutput = new System.IO.StringWriter();
             Console.SetOut(consoleOutput);
@@ -51,12 +51,13 @@ namespace RotorisLib.Tests
             Console.SetOut(new System.IO.StreamWriter(Console.OpenStandardOutput()));
             Console.SetError(new System.IO.StreamWriter(Console.OpenStandardError()));
 
-            Assert.Equal(System.Windows.Media.Color.FromArgb(204, 0, 0, 0), brushes.BackgroundBrush.Color);
+            // The RGB channels reflect the host's live system theme color and are not asserted here.
+            Assert.Equal(204, brushes.BackgroundBrush.Color.A);
             Assert.DoesNotContain("[WARNING] Failed to retrieve system background color.", consoleOutput.ToString());
         }
 
         [Fact]
-        public void AppThemeBrushes_SystemBackgroundColor_UsesUwpDefaultsInTestEnvironment()
+        public void AppThemeBrushes_SystemBackgroundColor_AppliesDefaultOpacityWithoutFallback()
         {
             System.IO.StringWriter consoleOutput = new System.IO.StringWriter();
             Console.SetOut(consoleOutput);
@@ -67,7 +68,8 @@ namespace RotorisLib.Tests
             Console.SetOut(new System.IO.StreamWriter(Console.OpenStandardOutput()));
             Console.SetError(new System.IO.StreamWriter(Console.OpenStandardError()));
 
-            Assert.Equal(System.Windows.Media.Color.FromArgb(204, 0, 0, 0), backgroundColor);
+            // The RGB channels reflect the host's live system theme color and are not asserted here.
+            Assert.Equal(204, backgroundColor.A);
             Assert.DoesNotContain("[ERROR] Could not get SystemBackgroundColor.", consoleOutput.ToString());
         }
     }
