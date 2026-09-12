@@ -25,7 +25,6 @@ namespace Rotoris.Logger
 
             LogBuffer.Append(value);
             Console.Write(value);
-            EventAggregator.PublishWriteLogs(value);
         }
         public static void WriteLine(string value)
         {
@@ -37,7 +36,6 @@ namespace Rotoris.Logger
             
             LogBuffer.AppendLine(value);
             Console.WriteLine(value);
-            EventAggregator.PublishWriteLogs(value + "\n");
         }
 
         /// <summary>

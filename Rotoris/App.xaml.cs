@@ -106,17 +106,17 @@ namespace Rotoris
             systemTray = new SystemTray();
 
 #if DEBUG
-            LogViewerWindow.OpenViewer();
+            LogViewerConsole.OpenViewer();
 #endif
 
             EventAggregator.ShowLogsReceived += (sender, e) =>
             {
-                LogViewerWindow.OpenViewer();
+                LogViewerConsole.OpenViewer();
             };
 
             EventAggregator.HideLogsReceived += (sender, e) =>
             {
-                LogViewerWindow.CloseViewer();
+                LogViewerConsole.CloseViewer();
             };
 
             SendStartupToast();
