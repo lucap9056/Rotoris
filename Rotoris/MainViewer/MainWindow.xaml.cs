@@ -26,6 +26,9 @@ namespace Rotoris.MainViewer
             InitializeViewModelSubscriptions();
             InitializeEventAggregatorSubscriptions();
             SourceInitialized += MainWindowSourceInitialized;
+
+            Hide();
+            Visibility = Visibility.Visible;
         }
         /*
          * 

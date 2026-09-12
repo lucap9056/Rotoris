@@ -50,14 +50,15 @@ namespace Rotoris.MainViewer
             Left = center.X - Width / 2;
             Top = center.Y - Height / 2;
             ClearMessageCanvas();
-            Visibility = Visibility.Visible;
             Status.UpdateMenuVisibledState(true);
         }
 
         private new void Hide()
         {
             viewModel.MenuOptions = [];
-            Visibility = Visibility.Hidden;
+            Point offScreen = UserInterface.GetOffScreenPosition(this);
+            Left = offScreen.X;
+            Top = offScreen.Y;
             Status.UpdateMenuVisibledState(false);
         }
         private void OnUILoadConfigurationRequested(object? sender, EventAggregator.UILoadConfigurationReceiveEventArgs e)
