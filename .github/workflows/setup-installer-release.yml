@@ -132,3 +132,16 @@ jobs:
         prerelease: false
         make_latest: true
         files: ${{ env.INSTALLER_FILE_NAME }}
+
+    - name: Delete Beta Releases
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release list --repo ${{ github.repository }} --limit 100 \
+          --json tagName,isPrerelease \
+          --jq '.[] | select(.isPrerelease) | select(.tagName | startswith("Rotoris_beta_")) | .tagName' |
+        while read -r tag; do
+          echo "Deleting beta release: $tag"
+          gh release delete "$tag" --repo ${{ github.repository }} --cleanup-tag --yes
+        done
