@@ -154,7 +154,7 @@ namespace Rotoris
 
                     try
                     {
-                        vm.DoString($"run('{moduleName}')");
+                        vm.GetFunction("run").Call(moduleName);
                     }
                     catch (LuaException ex)
                     {
