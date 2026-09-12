@@ -24,9 +24,9 @@ namespace RotorisConfigurationTool.ConfigurationControls.KeyBindings
         public ICommand DisableKeyboardCaptureCommand { get; }
 
         private readonly SettingsManager settings;
-        private readonly GlobalInputHook inputHook;
+        private readonly GlobalInputHook? inputHook;
         private EventHandler<GlobalInputHook.InputHookEventArgs>? inputHookHandler;
-        public KeyBindingsViewModel(SettingsManager s, GlobalInputHook hook)
+        public KeyBindingsViewModel(SettingsManager s, GlobalInputHook? hook)
         {
             SaveCommand = new RelayCommand(ExecuteSave);
             SetDefaultCommand = new RelayCommand(ExecuteSetDefault);
@@ -61,6 +61,11 @@ namespace RotorisConfigurationTool.ConfigurationControls.KeyBindings
         private void ExecuteEnableKeyboardCapture(object? parameter)
         {
             ClearKeyCapture();
+
+            if (inputHook == null)
+            {
+                return;
+            }
 
             if (parameter is TextBox textBox && textBox.Tag is TriggerKeys triggerKey)
             {
@@ -174,7 +179,10 @@ namespace RotorisConfigurationTool.ConfigurationControls.KeyBindings
             EditingKey = TriggerKeys.None;
             if (inputHookHandler != null)
             {
-                inputHook.KeyDown -= inputHookHandler;
+                if (inputHook != null)
+                {
+                    inputHook.KeyDown -= inputHookHandler;
+                }
                 inputHookHandler = null;
             }
         }
