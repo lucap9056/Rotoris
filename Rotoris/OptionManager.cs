@@ -120,7 +120,7 @@ namespace Rotoris
                     new ActionModule
                     {
                         CallNext = false,
-                        Script = $"menu:open_menu('{menu}')",
+                        Script = $"menu:open_menu('{EscapeLuaStringLiteral(menu)}')",
                     });
                 Log.Info($"OPEN_MENU-{menu}");
             }
@@ -454,6 +454,14 @@ namespace Rotoris
             }
         }
 
+        private static string EscapeLuaStringLiteral(string value)
+        {
+            return value
+                .Replace("\\", "\\\\")
+                .Replace("'", "\\'")
+                .Replace("\n", "\\n")
+                .Replace("\r", "\\r");
+        }
         private static bool ReadScript(string scriptName, out string content)
         {
             try
