@@ -29,7 +29,7 @@ namespace Rotoris.MainViewer
             {
                 if (!Dispatcher.CheckAccess())
                 {
-                    Dispatcher.Invoke(() => action(sender, e));
+                    Dispatcher.BeginInvoke(() => action(sender, e));
                 }
                 else
                 {
