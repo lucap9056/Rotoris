@@ -322,20 +322,5 @@ namespace Rotoris
         {
             HideLogsReceived?.Invoke(null, EventArgs.Empty);
         }
-
-        public static event EventHandler<WriteLogsEventArgs>? WriteLogsReceived;
-
-        public sealed class WriteLogsEventArgs(string value) : EventArgs
-        {
-            public string Value { set; get; } = value;
-        }
-        public static void PublishWriteLogs(char value)
-        {
-            WriteLogsReceived?.Invoke(null, new WriteLogsEventArgs(value.ToString()));
-        }
-        public static void PublishWriteLogs(string value)
-        {
-            WriteLogsReceived?.Invoke(null, new WriteLogsEventArgs(value));
-        }
     }
 }
