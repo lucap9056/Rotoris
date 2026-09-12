@@ -230,47 +230,55 @@ namespace Rotoris
         }
         private void OnHideMenu(object? sender, EventArgs e)
         {
-            RemoveIdleTimeout();
-            if (temporaryScroll.Enabled)
+            lock (configLock)
             {
-                temporaryScroll.Enabled = false;
+                RemoveIdleTimeout();
+                if (temporaryScroll.Enabled)
+                {
+                    temporaryScroll.Enabled = false;
+                }
+                runner.Clear();
+                messageManager.Clear();
+                EventAggregator.PublishUISetSize(configuration.UiSize);
+                EventAggregator.PublishUIClearMessageCanvas();
             }
-            runner.Clear();
-            messageManager.Clear();
-            EventAggregator.PublishUISetSize(configuration.UiSize);
-            EventAggregator.PublishUIClearMessageCanvas();
         }
         private void OnShowMenu(object? sender, EventAggregator.ShowMenuReceiveEventArgs e)
         {
-            RemoveIdleTimeout();
-            if (temporaryScroll.Enabled)
+            lock (configLock)
             {
-                temporaryScroll.Enabled = false;
-            }
-            string menuName = e.Name;
-            if (menuName == "")
-            {
-                runner.Run(AppConstants.BuiltInActionIds.Root);
-                return;
-            }
+                RemoveIdleTimeout();
+                if (temporaryScroll.Enabled)
+                {
+                    temporaryScroll.Enabled = false;
+                }
+                string menuName = e.Name;
+                if (menuName == "")
+                {
+                    runner.Run(AppConstants.BuiltInActionIds.Root);
+                    return;
+                }
 
-            Log.Info($"Displaying menu '{menuName}'");
+                Log.Info($"Displaying menu '{menuName}'");
 
-            if (cachedMenus.TryGetValue(menuName, out var options))
-            {
-                EventAggregator.PublishSetMenu(options);
+                if (cachedMenus.TryGetValue(menuName, out var options))
+                {
+                    EventAggregator.PublishSetMenu(options);
+                }
             }
-
         }
         private void OnTemporaryScrollTimeout()
         {
-            RemoveIdleTimeout();
-            if (temporaryScroll.Enabled)
+            lock (configLock)
             {
-                temporaryScroll.Enabled = false;
-                if (cachedLuaModules.ContainsKey(temporaryScroll.TimeoutModuleName))
+                RemoveIdleTimeout();
+                if (temporaryScroll.Enabled)
                 {
-                    runner.Run(temporaryScroll.TimeoutModuleName);
+                    temporaryScroll.Enabled = false;
+                    if (cachedLuaModules.ContainsKey(temporaryScroll.TimeoutModuleName))
+                    {
+                        runner.Run(temporaryScroll.TimeoutModuleName);
+                    }
                 }
             }
         }
@@ -330,87 +338,102 @@ namespace Rotoris
         public void OnNextOption(object? sender, EventAggregator.KeyboardShouldBlockEventArgs e)
         {
             e.ShouldBlock();
-            idleTimeout?.Reset();
-            if (temporaryScroll.Enabled)
+            lock (configLock)
             {
-                if (cachedLuaModules.ContainsKey(temporaryScroll.ClockwiseModuleName))
+                idleTimeout?.Reset();
+                if (temporaryScroll.Enabled)
                 {
-                    runner.Run(temporaryScroll.ClockwiseModuleName);
+                    if (cachedLuaModules.ContainsKey(temporaryScroll.ClockwiseModuleName))
+                    {
+                        runner.Run(temporaryScroll.ClockwiseModuleName);
+                    }
+                    return;
                 }
-                return;
+                currentIndex = (currentIndex + 1) % totalCount;
+                EventAggregator.PublishUIFocusOption(totalCount, currentIndex);
             }
-            currentIndex = (currentIndex + 1) % totalCount;
-            EventAggregator.PublishUIFocusOption(totalCount, currentIndex);
         }
         public void OnPreviousOption(object? sender, EventAggregator.KeyboardShouldBlockEventArgs e)
         {
             e.ShouldBlock();
-            idleTimeout?.Reset();
-            if (temporaryScroll.Enabled)
+            lock (configLock)
             {
-                if (cachedLuaModules.ContainsKey(temporaryScroll.CounterclockwiseModuleName))
+                idleTimeout?.Reset();
+                if (temporaryScroll.Enabled)
                 {
-                    runner.Run(temporaryScroll.CounterclockwiseModuleName);
+                    if (cachedLuaModules.ContainsKey(temporaryScroll.CounterclockwiseModuleName))
+                    {
+                        runner.Run(temporaryScroll.CounterclockwiseModuleName);
+                    }
+                    return;
                 }
-                return;
+                currentIndex = (totalCount + currentIndex - 1) % totalCount;
+                EventAggregator.PublishUIFocusOption(totalCount, currentIndex);
             }
-            currentIndex = (totalCount + currentIndex - 1) % totalCount;
-            EventAggregator.PublishUIFocusOption(totalCount, currentIndex);
         }
         public void OnExecuteSelectedOption(object? sender, EventAggregator.KeyboardShouldBlockEventArgs e)
         {
-            idleTimeout?.Reset();
-            if (temporaryScroll.Enabled)
+            lock (configLock)
             {
-                string clickModuleName = temporaryScroll.ClickModuleName;
-                if (!string.IsNullOrEmpty(clickModuleName) && cachedLuaModules.TryGetValue(clickModuleName, out var clickModule))
+                idleTimeout?.Reset();
+                if (temporaryScroll.Enabled)
                 {
-                    runner.Run(clickModuleName);
-                    if (!clickModule.CallNext)
+                    string clickModuleName = temporaryScroll.ClickModuleName;
+                    if (!string.IsNullOrEmpty(clickModuleName) && cachedLuaModules.TryGetValue(clickModuleName, out var clickModule))
+                    {
+                        runner.Run(clickModuleName);
+                        if (!clickModule.CallNext)
+                        {
+                            e.ShouldBlock();
+                        }
+                    }
+                    else
+                    {
+                        EventAggregator.PublishHideMenu();
+                    }
+                    return;
+                }
+
+                MenuOptionData option = currentOptions[currentIndex];
+
+                Log.Info($"Attempting to execute action for selected option ID: {option.ActionId}");
+
+                if (!string.IsNullOrEmpty(option.ActionId) && cachedLuaModules.TryGetValue(option.ActionId, out var module))
+                {
+                    runner.Run(option.ActionId);
+                    if (!module.CallNext)
                     {
                         e.ShouldBlock();
                     }
-                }
-                else
-                {
-                    EventAggregator.PublishHideMenu();
-                }
-                return;
-            }
-
-            MenuOptionData option = currentOptions[currentIndex];
-
-            Log.Info($"Attempting to execute action for selected option ID: {option.ActionId}");
-
-            if (!string.IsNullOrEmpty(option.ActionId) && cachedLuaModules.TryGetValue(option.ActionId, out var module))
-            {
-                runner.Run(option.ActionId);
-                if (!module.CallNext)
-                {
-                    e.ShouldBlock();
                 }
             }
         }
         public void OnClockwisePressed(object? sender, EventAggregator.KeyboardShouldBlockEventArgs e)
         {
-            if (hasVolumeUpModule && cachedLuaModules.TryGetValue(AppConstants.BuiltInActionIds.Clockwise, out var module))
+            lock (configLock)
             {
-                runner.Run(AppConstants.BuiltInActionIds.Clockwise);
-                if (!module.CallNext)
+                if (hasVolumeUpModule && cachedLuaModules.TryGetValue(AppConstants.BuiltInActionIds.Clockwise, out var module))
                 {
-                    e.ShouldBlock();
+                    runner.Run(AppConstants.BuiltInActionIds.Clockwise);
+                    if (!module.CallNext)
+                    {
+                        e.ShouldBlock();
+                    }
                 }
             }
         }
 
         public void OnCounterclockwisePressed(object? sender, EventAggregator.KeyboardShouldBlockEventArgs e)
         {
-            if (hasVolumeDownModule && cachedLuaModules.TryGetValue(AppConstants.BuiltInActionIds.Counterclockwise, out var module))
+            lock (configLock)
             {
-                runner.Run(AppConstants.BuiltInActionIds.Counterclockwise);
-                if (!module.CallNext)
+                if (hasVolumeDownModule && cachedLuaModules.TryGetValue(AppConstants.BuiltInActionIds.Counterclockwise, out var module))
                 {
-                    e.ShouldBlock();
+                    runner.Run(AppConstants.BuiltInActionIds.Counterclockwise);
+                    if (!module.CallNext)
+                    {
+                        e.ShouldBlock();
+                    }
                 }
             }
         }
@@ -421,10 +444,13 @@ namespace Rotoris
 
         private void OnExecuteAction(object? sender, EventAggregator.ExecuteActionEventArgs e)
         {
-            string actionId = e.ActionId;
-            if (!string.IsNullOrEmpty(actionId) && cachedLuaModules.ContainsKey(actionId))
+            lock (configLock)
             {
-                runner.Run(actionId);
+                string actionId = e.ActionId;
+                if (!string.IsNullOrEmpty(actionId) && cachedLuaModules.ContainsKey(actionId))
+                {
+                    runner.Run(actionId);
+                }
             }
         }
 
