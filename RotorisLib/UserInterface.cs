@@ -141,6 +141,26 @@
 
             return new System.Windows.Point(centerX, centerY);
         }
+
+        public static System.Windows.Point GetOffScreenPosition(System.Windows.Window wpfWindow)
+        {
+            System.Drawing.Rectangle virtualScreen = System.Windows.Forms.SystemInformation.VirtualScreen;
+
+            System.Windows.PresentationSource? source = System.Windows.PresentationSource.FromVisual(wpfWindow);
+            double dpiScaleX = 1.0;
+            double dpiScaleY = 1.0;
+
+            if (source != null && source.CompositionTarget != null)
+            {
+                dpiScaleX = source.CompositionTarget.TransformToDevice.M11;
+                dpiScaleY = source.CompositionTarget.TransformToDevice.M22;
+            }
+
+            double left = virtualScreen.Right / dpiScaleX + wpfWindow.Width;
+            double top = virtualScreen.Bottom / dpiScaleY + wpfWindow.Height;
+
+            return new System.Windows.Point(left, top);
+        }
     }
 
 }
