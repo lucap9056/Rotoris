@@ -132,6 +132,9 @@
         private System.Windows.Threading.Dispatcher? hookDispatcher;
         private volatile bool isHookRunning = false;
         private readonly Hotkey modifiers = new();
+        private readonly ManualResetEventSlim hookReadySignal = new(false);
+        private volatile string? hookInitializationError;
+        private static readonly TimeSpan HookStartupTimeout = TimeSpan.FromSeconds(5);
         // -------------------------------------------------------------------
         // --- Constructor & Disposable ---
         // -------------------------------------------------------------------
@@ -148,9 +151,14 @@
             };
             hookThread.Start();
 
-            while (!isHookRunning)
+            if (!hookReadySignal.Wait(HookStartupTimeout))
             {
-                Thread.Sleep(1);
+                throw new InvalidOperationException($"Timed out after {HookStartupTimeout.TotalSeconds}s waiting for the global input hook thread to start.");
+            }
+
+            if (hookInitializationError != null)
+            {
+                throw new InvalidOperationException($"Failed to initialize the global input hook: {hookInitializationError}");
             }
         }
         private static IntPtr GetModuleHandleForHook()
@@ -179,6 +187,8 @@
                 if (moduleHandle == IntPtr.Zero)
                 {
                     isHookRunning = false;
+                    hookInitializationError = "Failed to get the current process module handle.";
+                    hookReadySignal.Set();
                     return;
                 }
 
@@ -195,11 +205,14 @@
                     if (keyboardHookHandle != IntPtr.Zero) UnhookWindowsHookEx(keyboardHookHandle);
                     if (mouseHookHandle != IntPtr.Zero) UnhookWindowsHookEx(mouseHookHandle);
                     isHookRunning = false;
+                    hookInitializationError = $"SetWindowsHookEx failed (Win32 error code {errorCode}).";
+                    hookReadySignal.Set();
                     return;
                 }
 
                 isHookRunning = true;
                 System.Diagnostics.Debug.WriteLine("[LOG] Global keyboard and mouse hooks installed successfully.");
+                hookReadySignal.Set();
 
                 // Start the message loop
                 System.Windows.Threading.Dispatcher.Run();
@@ -210,6 +223,8 @@
             {
                 System.Diagnostics.Debug.WriteLine($"[FATAL_ERROR] HookThreadStart: Unhandled exception in hook thread: {ex.Message}");
                 isHookRunning = false;
+                hookInitializationError ??= $"Unhandled exception: {ex.Message}";
+                hookReadySignal.Set();
             }
         }
 
@@ -249,6 +264,11 @@
                 }
 
                 isHookRunning = false;
+            }
+
+            if (disposing)
+            {
+                hookReadySignal.Dispose();
             }
         }
 

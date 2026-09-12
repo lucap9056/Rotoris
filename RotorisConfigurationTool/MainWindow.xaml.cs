@@ -17,7 +17,7 @@ namespace RotorisConfigurationTool
             {
                 if (DataContext is MainContext ctx)
                 {
-                    ctx.InputHook.Dispose();
+                    ctx.InputHook?.Dispose();
                 }
             };
         }

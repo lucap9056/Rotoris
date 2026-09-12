@@ -85,7 +85,22 @@ namespace Rotoris
 
             base.OnStartup(e);
 
-            keyboardHook = new GlobalInputHook();
+            try
+            {
+                keyboardHook = new GlobalInputHook();
+            }
+            catch (InvalidOperationException ex)
+            {
+                Log.Error($"Failed to initialize the global input hook. Rotoris cannot start. {ex.Message}");
+                Log.ExportToFile();
+                new ToastContentBuilder()
+                    .AddText("Rotoris failed to start")
+                    .AddText("The global hotkey hook could not be installed. Check your security software or Group Policy settings.")
+                    .Show();
+                Shutdown();
+                return;
+            }
+
             Current.MainWindow = new MainWindow();
             optionManager = new OptionManager(keyboardHook);
             systemTray = new SystemTray();
