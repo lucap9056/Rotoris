@@ -261,6 +261,7 @@ namespace Rotoris.LuaModules
                         }
 
                         ProcessDone?.Invoke(this);
+                        proc.Dispose();
                     }
                     else
                     {
