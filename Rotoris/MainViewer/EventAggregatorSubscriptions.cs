@@ -49,6 +49,8 @@ namespace Rotoris.MainViewer
             Point center = UserInterface.GetFocusedScreenCenter(this);
             Left = center.X - Width / 2;
             Top = center.Y - Height / 2;
+            Topmost = false;
+            Topmost = true;
             ClearMessageCanvas();
             Status.UpdateMenuVisibledState(true);
         }
